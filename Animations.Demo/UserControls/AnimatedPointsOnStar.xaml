@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Animations.Demo.AnimatedPointsOnStar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:demo="clr-namespace:Animations.Demo"
+             xmlns:ani="clr-namespace:Animations;assembly=Animations"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance Type=demo:AnimatedPointsOnStar,
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="200"
+             d:DesignWidth="200"
+             Foreground="MediumPurple"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Storyboard x:Key="StarAnimationStoryboard">
+            <ani:PointCollectionAnimation AutoReverse="True"
+                                            RepeatBehavior="Forever"
+                                            Storyboard.TargetName="AnimatedStar"
+                                            Storyboard.TargetProperty="Points"
+                                            From="50.00,0.00 38.77,34.55 2.45,34.55 31.84,55.90 20.61,90.45 50.00,69.10 79.39,90.45 68.16,55.90 97.55,34.55 61.23,34.55"
+                                            To="50.00,0.00 0,0 0,34.55 0,100 20.61,100 50,100 79.39,100 100,100 100,34.55 100,0"
+                                            Duration="0:0:2" />
+        </Storyboard>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource StarAnimationStoryboard}" />
+        </EventTrigger>
+    </UserControl.Triggers>
+    <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+        <Polygon Name="AnimatedStar"
+                 Width="100"
+                 Height="100"
+                 Stroke="{Binding Foreground}"
+                 StrokeThickness="5"
+                 Fill="Transparent"
+                 Points="50.00,0.00 38.77,34.55 2.45,34.55 31.84,55.90 20.61,90.45 50.00,69.10 79.39,90.45 68.16,55.90 97.55,34.55 61.23,34.55">
+        </Polygon>
+    </Grid>
+</UserControl>

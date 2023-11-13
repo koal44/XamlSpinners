@@ -1,0 +1,47 @@
+﻿<Window x:Class="Animations.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:demo="clr-namespace:Animations.Demo"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="MainWindow"
+        Width="800"
+        Height="450"
+        mc:Ignorable="d">
+
+    <StackPanel Margin="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+        <StackPanel.Resources>
+            <Style TargetType="Separator">
+                <Setter Property="Height" Value="0" />
+                <Setter Property="Width" Value="30" />
+            </Style>
+        </StackPanel.Resources>
+
+        <!--  AnimatedDashOnCircle: Animates Shape.StrokeDashArray with DoubleCollectionAnimationUsingKeyFrames  -->
+        <demo:AnimatedDashOnCircle Width="100"
+                                   Height="100"
+                                   Foreground="Black" />
+        <Separator />
+
+        <!--  AnimatedDashesOnSquare: Animates Shape.StrokeDashArray with DoubleCollectionAnimation  -->
+        <demo:AnimatedDashesOnSquare Width="100"
+                                     Height="100"
+                                     Foreground="Black" />
+        <Separator />
+
+        <!--  AnimatedPointsOnStar: Animates Polygon.Points with PointCollectionAnimation  -->
+        <demo:AnimatedPointsOnStar Width="100"
+                                   Height="100"
+                                   Foreground="Black" />
+        <Separator />
+
+        <!--  AnimatedSegmentsOnOneTwoMorph: Animates Path.Data with PathFigureCollectionAnimation  -->
+        <demo:AnimatedSegmentsOnOneTwoMorph Width="100"
+                                            Height="100"
+                                            Foreground="Black" />
+
+    </StackPanel>
+</Window>

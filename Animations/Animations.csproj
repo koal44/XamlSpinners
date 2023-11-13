@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="System.Windows.Media.Animation\**" />
+    <EmbeddedResource Remove="System.Windows.Media.Animation\**" />
+    <None Remove="System.Windows.Media.Animation\**" />
+    <Page Remove="System.Windows.Media.Animation\**" />
+  </ItemGroup>
+
+</Project>

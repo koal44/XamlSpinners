@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Animations.Demo.AnimatedDashesOnSquare"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ani="clr-namespace:Animations;assembly=Animations"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:demo="clr-namespace:Animations.Demo"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DataContext="{d:DesignInstance Type=demo:AnimatedDashesOnSquare,
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="200"
+             d:DesignWidth="200"
+             Foreground="White"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Storyboard x:Key="RectangleAnimationStoryboard">
+            <ani:DoubleCollectionAnimation AutoReverse="True"
+                                           RepeatBehavior="Forever"
+                                           Storyboard.TargetName="AnimatedRectangle"
+                                           Storyboard.TargetProperty="StrokeDashArray"
+                                           From="1,1000"
+                                           To="70,1000"
+                                           Duration="0:0:2" />
+        </Storyboard>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource RectangleAnimationStoryboard}" />
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid>
+        <Rectangle x:Name="AnimatedRectangle"
+                   Width="100"
+                   Height="100"
+                   Stroke="{Binding Foreground}"
+                   StrokeDashArray="1,1"
+                   StrokeThickness="5" />
+    </Grid>
+
+</UserControl>
+

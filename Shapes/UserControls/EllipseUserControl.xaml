@@ -43,7 +43,7 @@
                                 Height="100"
                                 Stretch="Fill"
                                 Stroke="Black"
-                                StrokeThickness="2" />
+                                StrokeThickness="3" />
             </Border>
         </Grid>
 
@@ -117,7 +117,7 @@
 
             <!--  DashLength  -->
             <TextBlock Grid.Row="10"
-                       Text="{Binding ElementName=myEllipse, Path=DashLength, StringFormat='DashLength: {0:N0}'}" />
+                       Text="{Binding ElementName=myEllipse, Path=DashLength, StringFormat='DashLength: {0:N2}'}" />
             <Slider Grid.Row="10"
                     Grid.Column="1"
                     Maximum="200"
@@ -126,7 +126,7 @@
 
             <!--  GapLength  -->
             <TextBlock Grid.Row="12"
-                       Text="{Binding ElementName=myEllipse, Path=GapLength, StringFormat='GapLength: {0:N0}'}" />
+                       Text="{Binding ElementName=myEllipse, Path=GapLength, StringFormat='GapLength: {0:N2}'}" />
             <Slider Grid.Row="12"
                     Grid.Column="1"
                     Maximum="200"

@@ -9,7 +9,7 @@ namespace Shapes
     {
         public MainWindowViewModel()
         {
-            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Ellipse");
+            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Segmented Ellipse");
         }
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()

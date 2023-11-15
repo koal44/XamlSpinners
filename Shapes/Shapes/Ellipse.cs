@@ -9,9 +9,8 @@ namespace Shapes
     {
         #region Data
 
-        private EllipseGeometry _geometry;
+        private readonly EllipseGeometry _geometry;
         private readonly Pen _pen;
-        private readonly DoubleCollection _dashArray;
         private Rect _rect;
 
         #endregion
@@ -49,13 +48,12 @@ namespace Shapes
         {
             _rect = Rect.Empty;
             _geometry = new EllipseGeometry();
-            _dashArray = new DoubleCollection(2) { DashLength, GapLength };
             _pen = new Pen
             {
                 Thickness = StrokeThickness,
                 Brush = Stroke,
                 DashCap = StrokeDashCap,
-                DashStyle = new DashStyle(_dashArray, StrokeDashOffset)
+                DashStyle = new DashStyle(new DoubleCollection(2) { DashLength, GapLength }, StrokeDashOffset)
             };
         }
 
@@ -113,7 +111,8 @@ namespace Shapes
                     _rect.Width = _rect.Height = Math.Max(_rect.Width, _rect.Height);
                     break;
             }
-            _geometry.Center = new Point(_rect.Width / 2, _rect.Height / 2);
+            //_geometry = new EllipseGeometry(_rect);
+            _geometry.Center = new Point(_rect.X + _rect.Width / 2, _rect.Y + _rect.Height / 2);
             _geometry.RadiusX = _rect.Width / 2;
             _geometry.RadiusY = _rect.Height / 2;
 

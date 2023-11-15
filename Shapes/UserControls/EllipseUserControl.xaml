@@ -31,16 +31,22 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
         </StackPanel.Resources>
-        <Border Margin="0,0,0,20" VerticalAlignment="Center" HorizontalAlignment="Center"
-                BorderBrush="Black"
-                BorderThickness="1">
-            <shapes:Ellipse x:Name="myEllipse"
-                            Width="150"
-                            Height="100"
-                            Stretch="Fill"
-                            Stroke="Black"
-                            StrokeThickness="2" />
-        </Border>
+        <Grid Width="150"
+              Height="170">
+            <Border Margin="0,0,0,20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderBrush="Black"
+                    BorderThickness="1">
+                <shapes:Ellipse x:Name="myEllipse"
+                                Width="150"
+                                Height="100"
+                                Stretch="Fill"
+                                Stroke="Black"
+                                StrokeThickness="2" />
+            </Border>
+        </Grid>
+
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />

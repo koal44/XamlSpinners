@@ -2,9 +2,9 @@
 
 namespace Shapes
 {
-    public partial class SegmentedEllipseUserControl : UserControl
+    public partial class DashedEllipseUserControl : UserControl
     {
-        public SegmentedEllipseUserControl()
+        public DashedEllipseUserControl()
         {
             InitializeComponent();
         }

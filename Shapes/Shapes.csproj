@@ -18,7 +18,7 @@
     <Compile Update="UserControls\EllipseUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserControls\SegmentedEllipseUserControl.xaml.cs">
+    <Compile Update="UserControls\DashedEllipseUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -15,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="UserControls\DashedRectangleUserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControls\EllipseUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

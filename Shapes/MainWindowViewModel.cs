@@ -9,13 +9,14 @@ namespace Shapes
     {
         public MainWindowViewModel()
         {
-            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Dashed Ellipse");
+            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Dashed Rectangle");
         }
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()
         {
             ("Ellipse", new EllipseUserControl()),
-            ("Dashed Ellipse", new DashedEllipseUserControl())
+            ("Dashed Ellipse", new DashedEllipseUserControl()),
+            ("Dashed Rectangle", new DashedRectangleUserControl())
         };
 
 

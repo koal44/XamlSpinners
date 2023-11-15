@@ -8,5 +8,5 @@
         Width="800"
         Height="450"
         mc:Ignorable="d">
-    <Grid Margin="20" />
+    <Grid />
 </Window>

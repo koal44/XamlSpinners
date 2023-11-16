@@ -6,7 +6,7 @@
              xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
              xmlns:shapes="clr-namespace:Shapes"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             d:DesignHeight="400"
+             d:DesignHeight="450"
              d:DesignWidth="400"
              Background="White"
              Foreground="Black"
@@ -31,13 +31,23 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
         </StackPanel.Resources>
-        <Grid Width="150"
+        <Grid Width="170"
               Height="170">
             <Border Margin="0,0,0,20"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    BorderBrush="Black"
                     BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=showBorderCheckBox, Path=IsChecked}"
+                                         Value="False">
+                                <Setter Property="BorderBrush" Value="Transparent" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <shapes:Ellipse x:Name="myEllipse"
                                 Width="150"
                                 Height="100"
@@ -72,71 +82,79 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <!--  Width  -->
+            <!--  ShowBorder  -->
             <TextBlock Grid.Row="0"
+                       Text="ShowBorder:" />
+            <CheckBox x:Name="showBorderCheckBox"
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      IsChecked="False" />
+
+            <!--  Width  -->
+            <TextBlock Grid.Row="2"
                        Text="{Binding ElementName=myEllipse, Path=Width, StringFormat='Width: {0:N2}'}" />
-            <Slider Grid.Row="0"
+            <Slider Grid.Row="2"
                     Grid.Column="1"
                     Maximum="200"
                     Minimum="0"
                     Value="{Binding ElementName=myEllipse, Path=Width}" />
 
             <!--  Height  -->
-            <TextBlock Grid.Row="2"
+            <TextBlock Grid.Row="4"
                        Text="{Binding ElementName=myEllipse, Path=Height, StringFormat='Height: {0:N2}'}" />
-            <Slider Grid.Row="2"
+            <Slider Grid.Row="4"
                     Grid.Column="1"
                     Maximum="200"
                     Minimum="0"
                     Value="{Binding ElementName=myEllipse, Path=Height}" />
 
             <!--  Stretch  -->
-            <TextBlock Grid.Row="4"
+            <TextBlock Grid.Row="6"
                        Text="Stretch:" />
-            <ComboBox Grid.Row="4"
+            <ComboBox Grid.Row="6"
                       Grid.Column="1"
                       ItemsSource="{Binding Source={StaticResource stretchEnum}}"
                       SelectedItem="{Binding ElementName=myEllipse, Path=Stretch}" />
 
             <!--  StrokeThickness  -->
-            <TextBlock Grid.Row="6"
+            <TextBlock Grid.Row="8"
                        Text="{Binding ElementName=myEllipse, Path=StrokeThickness, StringFormat='Stroke Thickness: {0:N2}'}" />
-            <Slider Grid.Row="6"
+            <Slider Grid.Row="8"
                     Grid.Column="1"
                     Maximum="10"
                     Minimum="0.1"
                     Value="{Binding ElementName=myEllipse, Path=StrokeThickness}" />
 
             <!--  StrokeDashCap  -->
-            <TextBlock Grid.Row="8"
+            <TextBlock Grid.Row="10"
                        Text="Dash Cap:" />
-            <ComboBox Grid.Row="8"
+            <ComboBox Grid.Row="10"
                       Grid.Column="1"
                       ItemsSource="{Binding Source={StaticResource penLineCapEnum}}"
                       SelectedItem="{Binding ElementName=myEllipse, Path=StrokeDashCap}" />
 
             <!--  DashLength  -->
-            <TextBlock Grid.Row="10"
+            <TextBlock Grid.Row="12"
                        Text="{Binding ElementName=myEllipse, Path=DashLength, StringFormat='DashLength: {0:N2}'}" />
-            <Slider Grid.Row="10"
+            <Slider Grid.Row="12"
                     Grid.Column="1"
                     Maximum="200"
                     Minimum="0"
                     Value="{Binding ElementName=myEllipse, Path=DashLength}" />
 
             <!--  GapLength  -->
-            <TextBlock Grid.Row="12"
+            <TextBlock Grid.Row="14"
                        Text="{Binding ElementName=myEllipse, Path=GapLength, StringFormat='GapLength: {0:N2}'}" />
-            <Slider Grid.Row="12"
+            <Slider Grid.Row="14"
                     Grid.Column="1"
                     Maximum="200"
                     Minimum="0"
                     Value="{Binding ElementName=myEllipse, Path=GapLength}" />
 
             <!--  StrokeDashOffset  -->
-            <TextBlock Grid.Row="14"
+            <TextBlock Grid.Row="16"
                        Text="{Binding ElementName=myEllipse, Path=StrokeDashOffset, StringFormat='StrokeDashOffset: {0:N0}'}" />
-            <Slider Grid.Row="14"
+            <Slider Grid.Row="16"
                     Grid.Column="1"
                     Maximum="100"
                     Minimum="0"

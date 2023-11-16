@@ -233,8 +233,8 @@ namespace Shapes
         {
             if (_geometry.Rect.IsEmpty) return;
 
-            var rx = _geometry.RadiusX;
-            var ry = _geometry.RadiusY;
+            var rx = Math.Min(_geometry.RadiusX, _geometry.Rect.Width / 2);
+            var ry = Math.Min(_geometry.RadiusY, _geometry.Rect.Height / 2);
 
             double cornerEllipsePerimeter = rx == ry
                 ? 2 * Math.PI * rx
@@ -258,7 +258,8 @@ namespace Shapes
             // anchored dashes appear to be fixed with respect to: size, thickness, and dash/gap changes.
             double gapAdjustment = - gapLength / 2;
             double offset = DashFractionalOffset * normalizedPerimeter;
-            _pen.DashStyle.Offset = offset + gapAdjustment;
+            double rYAdjustment = rx == 0 ? 0 : -ry / StrokeThickness;
+            _pen.DashStyle.Offset = offset + gapAdjustment + rYAdjustment;
         }
 
         #endregion

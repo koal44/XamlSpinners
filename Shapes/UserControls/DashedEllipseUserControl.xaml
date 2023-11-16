@@ -6,7 +6,7 @@
              xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
              xmlns:shapes="clr-namespace:Shapes"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             d:DesignHeight="400"
+             d:DesignHeight="450"
              d:DesignWidth="400"
              Background="White"
              Foreground="Black"
@@ -29,6 +29,13 @@
                     <x:Type TypeName="media:Stretch" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
+            <ObjectDataProvider x:Key="anchorEnum"
+                                MethodName="GetValues"
+                                ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="shapes:Anchor" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
         </StackPanel.Resources>
         <Grid Width="170"
               Height="170">
@@ -41,7 +48,7 @@
                         <Setter Property="BorderBrush" Value="Black" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=showBorderCheckBox, Path=IsChecked}"
-                         Value="False">
+                                         Value="False">
                                 <Setter Property="BorderBrush" Value="Transparent" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -82,16 +89,18 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="5" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <!--  ShowBorder  -->
             <TextBlock Grid.Row="0"
-           Text="ShowBorder:" />
+                       Text="ShowBorder:" />
             <CheckBox x:Name="showBorderCheckBox"
-          Grid.Row="0"
-          Grid.Column="1"
-          IsChecked="False" />
-            
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      IsChecked="False" />
+
             <!--  Width  -->
             <TextBlock Grid.Row="2"
                        Text="{Binding ElementName=dashedEllipse, Path=Width, StringFormat='Width: {0:N2}'}" />
@@ -132,7 +141,7 @@
                        Text="{Binding ElementName=dashedEllipse, Path=DashCount, StringFormat='Dash Count: {0:N0}'}" />
             <Slider Grid.Row="10"
                     Grid.Column="1"
-                    Maximum="20"
+                    Maximum="50"
                     Minimum="1"
                     Value="{Binding ElementName=dashedEllipse, Path=DashCount}" />
 
@@ -161,6 +170,14 @@
                     Maximum="1.00"
                     Minimum="-1.00"
                     Value="{Binding ElementName=dashedEllipse, Path=DashFractionalOffset}" />
+
+            <!--  DashAnchor  -->
+            <TextBlock Grid.Row="18"
+                       Text="Anchor:" />
+            <ComboBox Grid.Row="18"
+                      Grid.Column="1"
+                      ItemsSource="{Binding Source={StaticResource anchorEnum}}"
+                      SelectedItem="{Binding ElementName=dashedEllipse, Path=DashAnchor}" />
         </Grid>
     </StackPanel>
 </UserControl>

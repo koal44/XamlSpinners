@@ -97,6 +97,21 @@ namespace Shapes
 
         private static bool OnValidateDashFractionalOffset(object value) => (double)value >= -1 && (double)value <= 1;
 
+
+        public Anchor DashAnchor
+        {
+            get => (Anchor)GetValue(DashAnchorProperty);
+            set => SetValue(DashAnchorProperty, value);
+        }
+
+        public static readonly DependencyProperty DashAnchorProperty = DependencyProperty.Register(nameof(DashAnchor), typeof(Anchor), typeof(DashedRectangle), new FrameworkPropertyMetadata(Anchor.Symmetric, FrameworkPropertyMetadataOptions.AffectsRender, OnDashAnchorChanged));
+
+        private static void OnDashAnchorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not DashedRectangle self) return;
+            self.UpdateDashStyle();
+        }
+
         #endregion
 
         #region Ctors
@@ -258,8 +273,17 @@ namespace Shapes
             // anchored dashes appear to be fixed with respect to: size, thickness, and dash/gap changes.
             double gapAdjustment = - gapLength / 2;
             double offset = DashFractionalOffset * normalizedPerimeter;
-            double rYAdjustment = rx == 0 ? 0 : -ry / StrokeThickness;
-            _pen.DashStyle.Offset = offset + gapAdjustment + rYAdjustment;
+            double ryAdjustment = rx == 0 ? 0 : -ry / StrokeThickness;
+
+            offset += DashAnchor switch
+            {
+                Anchor.Symmetric => gapAdjustment + ryAdjustment,
+                Anchor.Start => ryAdjustment,
+                _ => throw new NotImplementedException()
+            };
+
+            _pen.DashStyle.Offset = offset;
+
         }
 
         #endregion

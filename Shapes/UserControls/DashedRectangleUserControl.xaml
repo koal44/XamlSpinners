@@ -30,6 +30,13 @@
                     <x:Type TypeName="media:Stretch" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
+            <ObjectDataProvider x:Key="anchorEnum"
+                                MethodName="GetValues"
+                                ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="shapes:Anchor" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
         </StackPanel.Resources>
         <Grid Width="150"
               Height="170">
@@ -70,6 +77,8 @@
                 <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="5" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="5" />
                 <RowDefinition Height="auto" />
@@ -159,7 +168,7 @@
                        Text="{Binding ElementName=dashedRectangle, Path=DashCount, StringFormat='Dash Count: {0:N0}'}" />
             <Slider Grid.Row="14"
                     Grid.Column="1"
-                    Maximum="20"
+                    Maximum="50"
                     Minimum="1"
                     Value="{Binding ElementName=dashedRectangle, Path=DashCount}" />
 
@@ -188,6 +197,15 @@
                     Maximum="1.00"
                     Minimum="-1.00"
                     Value="{Binding ElementName=dashedRectangle, Path=DashFractionalOffset}" />
+
+            <!--  DashAnchor  -->
+            <TextBlock Grid.Row="22"
+                       Text="Anchor:" />
+            <ComboBox Grid.Row="22"
+                      Grid.Column="1"
+                      ItemsSource="{Binding Source={StaticResource anchorEnum}}"
+                      SelectedItem="{Binding ElementName=dashedRectangle, Path=DashAnchor}" />
+
         </Grid>
     </StackPanel>
 </UserControl>

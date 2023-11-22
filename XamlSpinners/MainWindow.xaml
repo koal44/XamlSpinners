@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
   <Grid>
-    <local:SurfaceSphere Width="400" Height="400" Background="Black"/>
+    <local:SpiralSphere Width="400" Height="400" Background="Black"/>
     <!--<local:MommySphere />-->
     <!--<local:UserControl1 Width="500" Height="500"/>-->
   </Grid>

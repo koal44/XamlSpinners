@@ -8,9 +8,9 @@ using System.Windows.Media.Animation;
 
 namespace XamlSpinners
 {
-    public partial class SurfaceSphere : UserControl
+    public partial class SpiralSphere : UserControl
     {
-        public SurfaceSphere()
+        public SpiralSphere()
         {
             InitializeComponent();
             Loaded += OnLoaded;
@@ -30,12 +30,10 @@ namespace XamlSpinners
                 FieldOfView = 45,
             };
 
-
             var rotateTransform = new RotateTransform(0, new Vector3(0, 0, 1));
             var rotation = rotateTransform.Rotation ?? throw new NullReferenceException("Rotation is null");
             sphereGroup.Transform = rotateTransform;
 
-            // Create and apply the DoubleAnimation
             var rotationAnimation = new DoubleAnimation
             {
                 From = 0,
@@ -47,22 +45,34 @@ namespace XamlSpinners
 
         }
 
-        private static List<Vector3> GenerateSpherePoints(int sphereCount, double SphereRadius, double azimuthalRotations)
+        private static List<Vector3> GenerateSpherePoints(int sphereCount, double sphereRadius, double azimuthalRotations)
         {
             var spherePoints = new List<Vector3>(sphereCount);
 
             for (int i = 1; i <= sphereCount; i++)
             {
-                double theta = (i / (double)sphereCount) * Math.PI * 2 * azimuthalRotations;
-                double delta = (i / (double)sphereCount) * Math.PI;
-                double x = SphereRadius * Math.Sin(delta) * Math.Cos(theta);
-                double y = SphereRadius * Math.Sin(delta) * Math.Sin(theta);
-                double z = SphereRadius * Math.Cos(delta);
-
-                spherePoints.Add(new Vector3((float)x, (float)y, (float)z));
+                var azimuthalAngle = (i / (double)sphereCount) * Math.PI * 2;
+                spherePoints.Add(CalculateSpiralSpherePoint(sphereRadius, azimuthalAngle));
             }
 
             return spherePoints;
+
+            // This method creates a spiral pattern by fixing `θ = n * φ`. The azimuthalRotations, parameter controls the tightness and frequency of the spirals on the sphere's surface.
+            Vector3 CalculateSpiralSpherePoint(double radius, double azimuthalAngle)
+            {
+                var inclinationAngle = azimuthalAngle * azimuthalRotations;
+                return CalculateSpherePoint(radius, azimuthalAngle, inclinationAngle);
+            }
+
+            // Textbook math
+            Vector3 CalculateSpherePoint(double radius, double azimuthalAngle, double inclinationAngle)
+            {
+                var x = radius * Math.Sin(inclinationAngle) * Math.Cos(azimuthalAngle);
+                var y = radius * Math.Sin(inclinationAngle) * Math.Sin(azimuthalAngle);
+                var z = radius * Math.Cos(inclinationAngle);
+
+                return new Vector3((float)x, (float)y, (float)z);
+            }
         }
 
 

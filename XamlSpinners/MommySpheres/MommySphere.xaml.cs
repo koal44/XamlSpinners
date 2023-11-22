@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 
 namespace XamlSpinners
 {
-    public partial class MommySphere2 : UserControl
+    public partial class MommySphere : UserControl
     {
         private const int SphereCount = 1000;
         private const double SphereRadius = 200;
@@ -23,17 +23,17 @@ namespace XamlSpinners
             set => SetValue(AzimuthalRotationsProperty, value);
         }
 
-        public static readonly DependencyProperty AzimuthalRotationsProperty = DependencyProperty.Register(nameof(AzimuthalRotations), typeof(double), typeof(MommySphere2), new PropertyMetadata(default(double), OnAzimuthalRotationsChanged));
+        public static readonly DependencyProperty AzimuthalRotationsProperty = DependencyProperty.Register(nameof(AzimuthalRotations), typeof(double), typeof(MommySphere), new PropertyMetadata(default(double), OnAzimuthalRotationsChanged));
 
         private static void OnAzimuthalRotationsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not MommySphere2 self) return;
+            if (d is not MommySphere self) return;
             self.SetupSphereAndRunAnimations();
         }
 
 
 
-        public MommySphere2()
+        public MommySphere()
         {
             DataContext = this;
             InitializeComponent();
@@ -97,10 +97,10 @@ namespace XamlSpinners
             return spherePoints;
         }
 
-        private static Model3DGroup GenerateSphereGroup(List<Point3D> spherePoints, Size3D dotSize, Brush brush)
+        private static Model3DGroup GenerateSphereGroup(List<Point3D> spherePoints, Size3D dotSize, Brush _)
         {
             var group = new Model3DGroup();
-            var material = new DiffuseMaterial(brush);
+            //var material = new DiffuseMaterial(brush);
 
 
             for (int i = 0; i < spherePoints.Count; i++)

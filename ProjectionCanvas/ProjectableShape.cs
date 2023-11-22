@@ -79,9 +79,5 @@ namespace ProjectionCanvas
 
         public new ProjectableShape CloneCurrentValue() => (ProjectableShape)base.CloneCurrentValue();
 
-       
-
-        
-
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Numerics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace ProjectionCanvas
 {
-    public class ProjectionViewport : Control
+    public class ProjectionViewport : FrameworkElement
     {
         // for now just one group
         public ProjectableShapeGroup ShapeGroup

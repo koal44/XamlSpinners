@@ -8,7 +8,7 @@ using System.Windows.Media.Animation;
 
 namespace ProjectionCanvas
 {
-    public partial class ProjectableShapeCollection : Animatable, IList, IList<ProjectableShape>
+    public class ProjectableShapeCollection : Animatable, IList, IList<ProjectableShape>
     {
         #region Fields
 

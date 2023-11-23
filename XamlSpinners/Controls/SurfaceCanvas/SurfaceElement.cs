@@ -49,13 +49,13 @@ namespace XamlSpinners
 
         #region Methods
 
-        public void DrawShape(DrawingContext context, Vector4 coords, float scale)
+        public void DrawShape(DrawingContext context, Vector4 coords, float scaleX, float scaleY)
         {
             var rect = new Rect(
-                coords.X - scale * (Size.Width / 2),
-                coords.Y - scale * (Size.Height / 2),
-                scale * Size.Width,
-                scale * Size.Height);
+                coords.X - scaleX * (Size.Width / 2),
+                coords.Y - scaleY * (Size.Height / 2),
+                scaleX * Size.Width,
+                scaleY * Size.Height);
 
             var geometry = new RectangleGeometry(rect);
             context.DrawGeometry(Fill, null, geometry);

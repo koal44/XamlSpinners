@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using XamlSpinners.Utils;
 
 namespace XamlSpinners
 {
@@ -13,7 +14,7 @@ namespace XamlSpinners
             var dot = new GeometryModel3D()
             {
                 Material = new DiffuseMaterial(Brushes.Red),
-                Geometry = Utils.CreateBlockMesh2(new Point3D(1,1,1), new Size3D(2,2,2))
+                Geometry = ThreeDUtils.CreateBlockMesh2(new Point3D(1,1,1), new Size3D(2,2,2))
             };
             extraModel.Content = dot;
         }

@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Media3D;
+using XamlSpinners.Utils;
 
 namespace XamlSpinners
 {
@@ -109,7 +110,7 @@ namespace XamlSpinners
                 double saturation = 1.0;
                 double lightness = (i / (double)spherePoints.Count) * 0.5;
 
-                Color color = Utils.HslToRgb(hue, saturation, lightness);
+                Color color = ColorUtils.HslToRgb(hue, saturation, lightness);
 
                 //var material2 = new DiffuseMaterial(new SolidColorBrush(color));
                 var material2 = new EmissiveMaterial(new SolidColorBrush(color));
@@ -118,7 +119,7 @@ namespace XamlSpinners
                 var dot = new GeometryModel3D()
                 {
                     Material = material2,
-                    Geometry = Utils.CreateBlockMesh2(point, dotSize)
+                    Geometry = ThreeDUtils.CreateBlockMesh2(point, dotSize)
 
                 };
                 group.Children.Add(dot);

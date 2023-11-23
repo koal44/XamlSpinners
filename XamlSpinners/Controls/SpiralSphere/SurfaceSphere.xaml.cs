@@ -42,26 +42,51 @@ namespace XamlSpinners
                 RepeatBehavior = RepeatBehavior.Forever
             };
             rotation.BeginAnimation(AxisAngleRotation.AngleProperty, rotationAnimation);
-
         }
 
-        private static List<Vector3> GenerateSpherePoints(int sphereCount, double sphereRadius, double azimuthalRotations)
+        private static List<Vector3> GenerateSpherePoints(int sphereCount, double sphereRadius, double azimuthToInclineRatio, SpiralPattern pattern = SpiralPattern.EqualArea)
         {
             var spherePoints = new List<Vector3>(sphereCount);
 
             for (int i = 1; i <= sphereCount; i++)
             {
-                var azimuthalAngle = (i / (double)sphereCount) * Math.PI * 2;
-                spherePoints.Add(CalculateSpiralSpherePoint(sphereRadius, azimuthalAngle));
+                // Inclination needs to be in the range [0, π] but how to distribute the points? If you do a linear distribution, you get a lot of points near the poles and not many near the equator, same as working with latitude and longitude (polar crowding)
+                (var azimuthalAngle, var inclinationAngle) = pattern switch
+                {
+                    SpiralPattern.LinearSpiral => GetLinearSpiralPoint(i, sphereCount),
+                    SpiralPattern.EqualArea => GetEqualAreaSpiralPoint(i, sphereCount),
+                    SpiralPattern.GoldenSpiral => GetGoldenSpiralPoint(i, sphereCount),
+                    _ => throw new NotImplementedException(),
+                };
+
+                spherePoints.Add(CalculateSpherePoint(sphereRadius, azimuthalAngle, inclinationAngle));
             }
 
             return spherePoints;
 
-            // This method creates a spiral pattern by fixing `θ = n * φ`. The azimuthalRotations, parameter controls the tightness and frequency of the spirals on the sphere's surface.
-            Vector3 CalculateSpiralSpherePoint(double radius, double azimuthalAngle)
+            // This method creates a spiral pattern by fixing `φ = n * θ`. The azimuthToInclineRatio,
+            // parameter controls the tightness and frequency of the spirals on the sphere's surface.
+            (double azimuthal, double incline) GetLinearSpiralPoint(double i, double n)
             {
-                var inclinationAngle = azimuthalAngle * azimuthalRotations;
-                return CalculateSpherePoint(radius, azimuthalAngle, inclinationAngle);
+                var inclinationAngle = (i / n) * Math.PI;
+                var azimuthalAngle = inclinationAngle * azimuthToInclineRatio;
+                return (azimuthalAngle, inclinationAngle);
+            }
+
+            (double azimuthal, double incline) GetEqualAreaSpiralPoint(double i, double n)
+            {
+                var inclinationAngle = Math.Acos(1 - 2 * i / n);
+                var azimuthalAngle = inclinationAngle * azimuthToInclineRatio;
+                return (azimuthalAngle, inclinationAngle);
+            }
+
+            (double azimuthal, double incline) GetGoldenSpiralPoint(double i, double n)
+            {
+                var phi = (1 + Math.Sqrt(5)) / 2; // Golden Ratio
+                var inclinationAngle = Math.Acos(1 - 2 * i / n); // Equal area inclination
+                var azimuthalAngle = 2 * Math.PI * i / (phi * n); // Golden Spiral azimuthal
+                azimuthalAngle *= azimuthToInclineRatio;
+                return (azimuthalAngle, inclinationAngle);
             }
 
             // Textbook math
@@ -73,6 +98,13 @@ namespace XamlSpinners
 
                 return new Vector3((float)x, (float)y, (float)z);
             }
+        }
+
+        public enum SpiralPattern
+        {
+            LinearSpiral,
+            EqualArea,
+            GoldenSpiral
         }
 
 

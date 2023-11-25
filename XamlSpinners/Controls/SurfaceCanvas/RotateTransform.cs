@@ -10,7 +10,7 @@ namespace XamlSpinners
         private float _centerX;
         private float _centerY;
         private float _centerZ;
-        private AxisAngleRotation? _rotation = null;
+        private AxisAngleRotation _rotation;
 
         #endregion
 
@@ -61,7 +61,7 @@ namespace XamlSpinners
         }
 
 
-        public AxisAngleRotation? Rotation
+        public AxisAngleRotation Rotation
         {
             get { ReadPreamble(); return _rotation; }
             set => SetValue(RotationProperty, value);
@@ -81,13 +81,13 @@ namespace XamlSpinners
 
         public RotateTransform()
         {
-            Rotation = new AxisAngleRotation();
+            Rotation = _rotation = new();
         }
 
         public RotateTransform(float angle, Vector3 center)
         {
             (CenterX, CenterY, CenterZ) = center;
-            Rotation = new AxisAngleRotation(center, angle);
+            Rotation = _rotation = new(center, angle);
         }
 
         #endregion

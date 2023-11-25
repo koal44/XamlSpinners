@@ -8,11 +8,11 @@ using System.Windows.Media.Animation;
 
 namespace XamlSpinners
 {
-    public abstract class Spinner : Control
+    public abstract class Spinner : UserControl
     {
         #region Data
 
-        private Storyboard ActiveStoryboard { get; set; }
+        internal Storyboard ActiveStoryboard { get; set; }
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace XamlSpinners
             set => SetValue(IsActiveProperty, value);
         }
 
-        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(Spinner), new PropertyMetadata(true, OnIsActiveChanged));
+        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(Spinner), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender, OnIsActiveChanged));
 
 
         public ObservableCollection<Brush> Palette
@@ -43,7 +43,7 @@ namespace XamlSpinners
             set => SetValue(PaletteProperty, value);
         }
 
-        public static readonly DependencyProperty PaletteProperty = DependencyProperty.Register(nameof(Palette), typeof(ObservableCollection<Brush>), typeof(Spinner), new PropertyMetadata(null, OnPaletteChanged));
+        public static readonly DependencyProperty PaletteProperty = DependencyProperty.Register(nameof(Palette), typeof(ObservableCollection<Brush>), typeof(Spinner), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnPaletteChanged));
 
 
         public bool IsIndeterminate
@@ -52,7 +52,7 @@ namespace XamlSpinners
             set => SetValue(IsIndeterminateProperty, value);
         }
 
-        public static readonly DependencyProperty IsIndeterminateProperty = DependencyProperty.Register(nameof(IsIndeterminate), typeof(bool), typeof(Spinner), new PropertyMetadata(true, OnIsIndeterminateChanged));
+        public static readonly DependencyProperty IsIndeterminateProperty = DependencyProperty.Register(nameof(IsIndeterminate), typeof(bool), typeof(Spinner), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender, OnIsIndeterminateChanged));
 
 
         public double Minimum
@@ -61,7 +61,7 @@ namespace XamlSpinners
             set => SetValue(MinimumProperty, value);
         }
 
-        public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(Spinner), new PropertyMetadata(default(double), OnMinimumChanged));
+        public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(Spinner), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, OnMinimumChanged));
 
 
         public double Maximum
@@ -70,7 +70,7 @@ namespace XamlSpinners
             set => SetValue(MaximumProperty, value);
         }
 
-        public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(Spinner), new PropertyMetadata(default(double), OnMaximumChanged));
+        public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(Spinner), new FrameworkPropertyMetadata(100.0, FrameworkPropertyMetadataOptions.AffectsRender, OnMaximumChanged));
 
 
         public double Progress
@@ -79,7 +79,7 @@ namespace XamlSpinners
             set => SetValue(ProgressProperty, value);
         }
 
-        public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register(nameof(Progress), typeof(double), typeof(Spinner), new PropertyMetadata(default(double), OnProgressChanged), ValidateProgress);
+        public static readonly DependencyProperty ProgressProperty = DependencyProperty.Register(nameof(Progress), typeof(double), typeof(Spinner), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, OnProgressChanged), ValidateProgress);
         
 
         public double Speed
@@ -88,7 +88,7 @@ namespace XamlSpinners
             set => SetValue(SpeedProperty, value);
         }
 
-        public static readonly DependencyProperty SpeedProperty = DependencyProperty.Register(nameof(Speed), typeof(double), typeof(Spinner), new PropertyMetadata(default(double), OnSpeedChanged));
+        public static readonly DependencyProperty SpeedProperty = DependencyProperty.Register(nameof(Speed), typeof(double), typeof(Spinner), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender, OnSpeedChanged));
         
 
         #endregion
@@ -103,11 +103,10 @@ namespace XamlSpinners
 
         internal virtual void OnIsActiveChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (IsActive)
-                ActiveStoryboard?.Begin();
-            else
-                ActiveStoryboard?.Stop();
+            UpdateActiveStoryboard();
         }
+
+
 
 
         private static void OnPaletteChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -198,6 +197,18 @@ namespace XamlSpinners
             {
                 ActiveStoryboard = xamlStoryboard;
             }
+        }
+
+        #endregion
+
+        #region Methods
+
+        internal void UpdateActiveStoryboard()
+        {
+            if (IsActive)
+                ActiveStoryboard?.Begin();
+            else
+                ActiveStoryboard?.Stop();
         }
 
         #endregion

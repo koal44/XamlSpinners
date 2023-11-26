@@ -246,7 +246,7 @@ namespace XamlSpinners
 
             var surfacePoints = CreateSurfacePoints(SurfacePointCount, radius, AzimuthalToInclineRatio, SpiralPattern);
             var surfaceGroup = CreateSurfaceGroup(surfacePoints, SurfacePointSize, Palette);
-            surfaceGroup.Transform = new RotateTransform(0, AxisOfRation);
+            surfaceGroup.Transform = new RotateTransform(AxisOfRation, 0, new Vector3(0,0,0));
             rootCanvas.SurfaceGroup = surfaceGroup;
 
             SetUpAnimation();

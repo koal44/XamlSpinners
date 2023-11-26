@@ -5,6 +5,7 @@ using System.Windows.Media.Animation;
 
 namespace XamlSpinners
 {
+    // rename suggestion: AnimatableQuaternion, QuaternionTransform (though it doesn't expose a Matrix4x4)
     public class AxisAngleRotation : Animatable
     {
         #region Data

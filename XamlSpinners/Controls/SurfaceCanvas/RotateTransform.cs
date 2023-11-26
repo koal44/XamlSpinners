@@ -10,7 +10,7 @@ namespace XamlSpinners
         private float _centerX;
         private float _centerY;
         private float _centerZ;
-        private AxisAngleRotation _rotation;
+        private AxisAngleRotation _rotation = AxisAngleRotation.Identity;
 
         #endregion
 
@@ -30,7 +30,6 @@ namespace XamlSpinners
             self._centerX = (float)e.NewValue;
         }
 
-
         public float CenterY
         {
             get { ReadPreamble(); return _centerY; }
@@ -45,7 +44,6 @@ namespace XamlSpinners
             self._centerY = (float)e.NewValue;
         }
 
-
         public float CenterZ
         {
             get { ReadPreamble(); return _centerZ; }
@@ -59,7 +57,6 @@ namespace XamlSpinners
             if (d is not RotateTransform self) return;
             self._centerZ = (float)e.NewValue;
         }
-
 
         public AxisAngleRotation Rotation
         {
@@ -84,10 +81,10 @@ namespace XamlSpinners
             Rotation = _rotation = new();
         }
 
-        public RotateTransform(float angle, Vector3 center)
+        public RotateTransform(Vector3 axis, float angle, Vector3 center)
         {
             (CenterX, CenterY, CenterZ) = center;
-            Rotation = _rotation = new(center, angle);
+            Rotation = new AxisAngleRotation(axis, angle);
         }
 
         #endregion
@@ -108,7 +105,6 @@ namespace XamlSpinners
                 return CreateRotationMatrix(ref quaternion, ref center);
             }
         }
-
 
         public static Matrix4x4 CreateRotationMatrix(ref Quaternion quaternion, ref Vector3 center)
         {

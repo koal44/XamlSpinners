@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
@@ -131,7 +130,7 @@ namespace XamlSpinners
             var projectionXScale = (projectionYScale / _rect.Height * _rect.Width);
 
             // Adjust these values as needed
-            //float baseScale = 0.01f;  // Base scale at reference Z
+            //float baseScale = 0.03f;  // Base scale at reference Z
             //float scaleRate = 0.001f; // Rate of scale change with depth
 
             foreach (var shape in SurfaceGroup.Children)
@@ -139,9 +138,14 @@ namespace XamlSpinners
                 var projectedPosition = Vector4.Transform(shape.Position, fullTransformMatrix);
                 var perspectivePosition = projectedPosition * (1 / projectedPosition.W);
 
-                //var scale = baseScale * (float)Math.Pow(2, (1 - perspectivePosition.Z) / scaleRate);
-                var scaleY = projectionXScale / projectedPosition.W * (_rect.Width / 2);
-                var scaleX = projectionYScale / projectedPosition.W * (_rect.Height / 2);
+                //var scaleX = baseScale * (float)Math.Pow(2, (1 - perspectivePosition.Z) / scaleRate);
+                //var scaleY = baseScale * (float)Math.Pow(2, (1 - perspectivePosition.Z) / scaleRate);
+                var scaleX = projectionXScale / projectedPosition.W * (_rect.Width / 2);
+                var scaleY = projectionYScale / projectedPosition.W * (_rect.Height / 2);
+
+                double perspectiveDistortion = 5.0;
+                scaleX = Math.Pow(scaleX, perspectiveDistortion);
+                scaleY = Math.Pow(scaleY, perspectiveDistortion);
 
                 shape.DrawShape(drawingContext, perspectivePosition, scaleX: (float)scaleX, scaleY: (float)scaleY);
             }

@@ -10,6 +10,12 @@ namespace XamlSpinners
 {
     public partial class SpiralSphere : Spinner
     {
+        #region Data
+
+        private double _radius;
+
+        #endregion
+
         #region Dependency Properties
 
         public int SurfacePointCount
@@ -18,7 +24,7 @@ namespace XamlSpinners
             set => SetValue(SurfacePointCountProperty, value);
         }
 
-        public static readonly DependencyProperty SurfacePointCountProperty = DependencyProperty.Register(nameof(SurfacePointCount), typeof(int), typeof(SpiralSphere), new FrameworkPropertyMetadata(200, FrameworkPropertyMetadataOptions.AffectsRender, OnSurfacePointCountChanged));
+        public static readonly DependencyProperty SurfacePointCountProperty = DependencyProperty.Register(nameof(SurfacePointCount), typeof(int), typeof(SpiralSphere), new FrameworkPropertyMetadata(1000, FrameworkPropertyMetadataOptions.AffectsRender, OnSurfacePointCountChanged));
 
         private static void OnSurfacePointCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -26,7 +32,10 @@ namespace XamlSpinners
             self.OnSurfacePointCountChanged(e);
         }
 
-        protected void OnSurfacePointCountChanged(DependencyPropertyChangedEventArgs e) { }
+        protected void OnSurfacePointCountChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetUpSurface();
+        }
 
 
         public Size SurfacePointSize
@@ -43,7 +52,10 @@ namespace XamlSpinners
             self.OnPointSizeChanged(e);
         }
 
-        protected void OnPointSizeChanged(DependencyPropertyChangedEventArgs e) { }
+        protected void OnPointSizeChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetUpSurface();
+        }
 
 
         public Pattern SpiralPattern
@@ -60,7 +72,10 @@ namespace XamlSpinners
             self.OnSpiralPatternChanged(e);
         }
 
-        protected virtual void OnSpiralPatternChanged(DependencyPropertyChangedEventArgs e) { }
+        protected virtual void OnSpiralPatternChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetUpSurface();
+        }
 
 
         public double AzimuthalToInclineRatio
@@ -77,7 +92,10 @@ namespace XamlSpinners
             self.OnAzimuthalToInclineRatioChanged(e);
         }
 
-        protected void OnAzimuthalToInclineRatioChanged(DependencyPropertyChangedEventArgs e) { }
+        protected void OnAzimuthalToInclineRatioChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetUpSurface();
+        }
 
 
         public Vector3 CameraDirection
@@ -86,7 +104,7 @@ namespace XamlSpinners
             set => SetValue(CameraDirectionProperty, value);
         }
 
-        public static readonly DependencyProperty CameraDirectionProperty = DependencyProperty.Register(nameof(CameraDirection), typeof(Vector3), typeof(SpiralSphere), new FrameworkPropertyMetadata(new Vector3(0,1,0), FrameworkPropertyMetadataOptions.AffectsRender, OnCameraDirectionChanged));
+        public static readonly DependencyProperty CameraDirectionProperty = DependencyProperty.Register(nameof(CameraDirection), typeof(Vector3), typeof(SpiralSphere), new FrameworkPropertyMetadata(new Vector3(0, 1, 0), FrameworkPropertyMetadataOptions.AffectsRender, OnCameraDirectionChanged));
 
         private static void OnCameraDirectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -94,24 +112,27 @@ namespace XamlSpinners
             self.OnCameraDirectionChanged(e);
         }
 
-        protected void OnCameraDirectionChanged(DependencyPropertyChangedEventArgs e) { }
-
-
-        public double CameraDistanceMultiplier
+        protected void OnCameraDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
-            get => (double)GetValue(CameraDistanceMultiplierProperty);
-            set => SetValue(CameraDistanceMultiplierProperty, value);
+            SetUpCamera();
         }
 
-        public static readonly DependencyProperty CameraDistanceMultiplierProperty = DependencyProperty.Register(nameof(CameraDistanceMultiplier), typeof(double), typeof(SpiralSphere), new FrameworkPropertyMetadata(6.0, FrameworkPropertyMetadataOptions.AffectsRender, OnCameraDistanceMultiplierChanged));
 
-        private static void OnCameraDistanceMultiplierChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not SpiralSphere self) return;
-            self.OnCameraDistanceMultiplierChanged(e);
-        }
+        //public double CameraDistanceMultiplier
+        //{
+        //    get => (double)GetValue(CameraDistanceMultiplierProperty);
+        //    set => SetValue(CameraDistanceMultiplierProperty, value);
+        //}
 
-        protected void OnCameraDistanceMultiplierChanged(DependencyPropertyChangedEventArgs e) { }
+        //public static readonly DependencyProperty CameraDistanceMultiplierProperty = DependencyProperty.Register(nameof(CameraDistanceMultiplier), typeof(double), typeof(SpiralSphere), new FrameworkPropertyMetadata(6.0, FrameworkPropertyMetadataOptions.AffectsRender, OnCameraDistanceMultiplierChanged));
+
+        //private static void OnCameraDistanceMultiplierChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (d is not SpiralSphere self) return;
+        //    self.OnCameraDistanceMultiplierChanged(e);
+        //}
+
+        //protected void OnCameraDistanceMultiplierChanged(DependencyPropertyChangedEventArgs e) { }
 
 
         public Vector3 UpDirection
@@ -120,7 +141,7 @@ namespace XamlSpinners
             set => SetValue(UpDirectionProperty, value);
         }
 
-        public static readonly DependencyProperty UpDirectionProperty = DependencyProperty.Register(nameof(UpDirection), typeof(Vector3), typeof(SpiralSphere), new FrameworkPropertyMetadata(new Vector3(0,0,1), FrameworkPropertyMetadataOptions.AffectsRender, OnUpDirectionChanged));
+        public static readonly DependencyProperty UpDirectionProperty = DependencyProperty.Register(nameof(UpDirection), typeof(Vector3), typeof(SpiralSphere), new FrameworkPropertyMetadata(new Vector3(0, 0, 1), FrameworkPropertyMetadataOptions.AffectsRender, OnUpDirectionChanged));
 
         private static void OnUpDirectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -128,16 +149,19 @@ namespace XamlSpinners
             self.OnUpDirectionChanged(e);
         }
 
-        protected void OnUpDirectionChanged(DependencyPropertyChangedEventArgs e) { }
-
-
-        public double FieldOfView
+        protected void OnUpDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
-            get => (double)GetValue(FieldOfViewProperty);
+            SetUpCamera();
+        }
+
+
+        public float FieldOfView
+        {
+            get => (float)GetValue(FieldOfViewProperty);
             set => SetValue(FieldOfViewProperty, value);
         }
 
-        public static readonly DependencyProperty FieldOfViewProperty = DependencyProperty.Register(nameof(FieldOfView), typeof(double), typeof(SpiralSphere), new FrameworkPropertyMetadata(45.0, FrameworkPropertyMetadataOptions.AffectsRender, OnFieldOfViewChanged));
+        public static readonly DependencyProperty FieldOfViewProperty = DependencyProperty.Register(nameof(FieldOfView), typeof(float), typeof(SpiralSphere), new FrameworkPropertyMetadata(40.0f, FrameworkPropertyMetadataOptions.AffectsRender, OnFieldOfViewChanged));
 
         private static void OnFieldOfViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -145,7 +169,10 @@ namespace XamlSpinners
             self.OnFieldOfViewChanged(e);
         }
 
-        protected void OnFieldOfViewChanged(DependencyPropertyChangedEventArgs e) { }
+        protected void OnFieldOfViewChanged(DependencyPropertyChangedEventArgs e)
+        {
+            SetUpCamera();
+        }
 
 
         public Vector3 AxisOfRation
@@ -170,6 +197,27 @@ namespace XamlSpinners
             transform.Rotation.Axis = axis;
         }
 
+
+        public Stretch Stretch
+        {
+            get => (Stretch)GetValue(StretchProperty);
+            set => SetValue(StretchProperty, value);
+        }
+
+        public static readonly DependencyProperty StretchProperty = DependencyProperty.Register(nameof(Stretch), typeof(Stretch), typeof(SpiralSphere), new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
+
+        private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not SpiralSphere self) return;
+            self.OnStretchChanged(e);
+        }
+
+        protected void OnStretchChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is not Stretch newStretch) return;
+            rootCanvas.Stretch = newStretch;
+        }
+
         #endregion
 
         #region Constructors
@@ -186,27 +234,40 @@ namespace XamlSpinners
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            SetUpSurface();
             SetUpCamera();
+            SetUpSurface();
             SetUpAnimation();
         }
 
         private void SetUpSurface()
         {
-            var surfacePoints = CreateSurfacePoints(SurfacePointCount, 100, AzimuthalToInclineRatio);
+            var size = Math.Max(ActualWidth, ActualHeight);
+            var radius = size / 2;
+
+            var surfacePoints = CreateSurfacePoints(SurfacePointCount, radius, AzimuthalToInclineRatio, SpiralPattern);
             var surfaceGroup = CreateSurfaceGroup(surfacePoints, SurfacePointSize, Palette);
             surfaceGroup.Transform = new RotateTransform(0, AxisOfRation);
             rootCanvas.SurfaceGroup = surfaceGroup;
+
+            SetUpAnimation();
         }
 
         private void SetUpCamera()
         {
+            var size = Math.Max(ActualWidth, ActualHeight);
+            var radius = size / 2;
+
+            var fovRad = FieldOfView * Math.PI / 180;
+
+            var cameraDistance = (float)(radius / Math.Tan(fovRad / 2) / Math.Cos(fovRad / 2));
+            var cameraPosition = Vector3.Multiply(cameraDistance, Vector3.Normalize(CameraDirection));
+
             rootCanvas.Camera = new Camera()
             {
-                CameraPosition = new Vector3(0, 600, 0),
-                TargetPosition = new Vector3(0, -1, 0),
-                UpDirection = new Vector3(0, 0, 1),
-                FieldOfView = 45,
+                CameraPosition = cameraPosition,
+                TargetPosition = new Vector3(0, 0, 0),
+                UpDirection = UpDirection,
+                FieldOfView = FieldOfView,
             };
         }
 

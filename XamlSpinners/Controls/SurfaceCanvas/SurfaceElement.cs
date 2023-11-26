@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -51,6 +52,7 @@ namespace XamlSpinners
 
         public void DrawShape(DrawingContext context, Vector4 coords, float scaleX, float scaleY)
         {
+            if (scaleX <= 0 || scaleY <= 0) return;
             var rect = new Rect(
                 coords.X - scaleX * (Size.Width / 2),
                 coords.Y - scaleY * (Size.Height / 2),

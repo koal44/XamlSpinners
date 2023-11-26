@@ -1,0 +1,91 @@
+﻿<Window x:Class="XamlSpinners.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:XamlSpinners.Demo"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:spinners="https://github.com/koal44/XamlSpinners"
+        Title="MainWindow"
+        Width="800"
+        Height="450"
+        d:DataContext="{d:DesignInstance local:MainWindowViewModel,
+                                         IsDesignTimeCreatable=True}"
+        Background="#ff1e1e1e"
+        mc:Ignorable="d">
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <Border Grid.Column="0"
+              BorderBrush="White"
+              BorderThickness="1">
+        <ContentControl x:Name="selectedSpinnerContentControl" Margin="5"
+                        Content="{Binding SelectedSpinnerConfig.ConfigurableSpinner, Mode=OneWay}" />
+      </Border>
+
+      <ContentControl x:Name="selectedAdjustmentsContentControl"
+                      Grid.Column="1"
+                      MinWidth="300" Margin="20,0,0,0"
+                      Content="{Binding SelectedSpinnerConfig.AdjustablePropertiesGrid, Mode=OneWay}"
+                      Foreground="White">
+        <ContentControl.Resources>
+          <Style TargetType="Slider">
+            <Setter Property="MinWidth" Value="50" />
+          </Style>
+          <!--<Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+          </Style>-->
+        </ContentControl.Resources>
+      </ContentControl>
+    </Grid>
+
+
+    <WrapPanel Name="ThumbnailPanel"
+               Grid.Row="2"
+               Margin="0,20,0,0">
+      <!--<spinners:SpiralSphere Width="60"
+                             Height="60" />-->
+    </WrapPanel>
+
+    <!--
+    <ListBox Grid.Row="2"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=Window}}">
+
+        ItemsSource="{Binding SpinnerConfigs}"
+        SelectedItem="{Binding SelectedSpinnerConfig}"
+
+
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Border
+                  Margin="5"
+                  Padding="5"
+                  BorderBrush="White"
+                  BorderThickness="1">
+            <StackPanel>
+              <TextBlock Text="{Binding ThumbnailSpinner}" />
+              <ContentControl Width="100"
+                              Height="100"
+                              Content="{Binding ThumbnailSpinner, Mode=OneWay}" />
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    -->
+  </Grid>
+</Window>

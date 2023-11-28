@@ -10,12 +10,6 @@ namespace XamlSpinners
 {
     public partial class SpiralSphere : Spinner
     {
-        #region Data
-
-        private double _radius;
-
-        #endregion
-
         #region Dependency Properties
 
         public int SurfacePointCount
@@ -24,7 +18,7 @@ namespace XamlSpinners
             set => SetValue(SurfacePointCountProperty, value);
         }
 
-        public static readonly DependencyProperty SurfacePointCountProperty = DependencyProperty.Register(nameof(SurfacePointCount), typeof(int), typeof(SpiralSphere), new FrameworkPropertyMetadata(1000, FrameworkPropertyMetadataOptions.AffectsRender, OnSurfacePointCountChanged));
+        public static readonly DependencyProperty SurfacePointCountProperty = DependencyProperty.Register(nameof(SurfacePointCount), typeof(int), typeof(SpiralSphere), new FrameworkPropertyMetadata(200, FrameworkPropertyMetadataOptions.AffectsRender, OnSurfacePointCountChanged));
 
         private static void OnSurfacePointCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -32,19 +26,19 @@ namespace XamlSpinners
             self.OnSurfacePointCountChanged(e);
         }
 
-        protected void OnSurfacePointCountChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnSurfacePointCountChanged(DependencyPropertyChangedEventArgs e)
         {
             SetUpSurface();
         }
 
 
-        public Size SurfacePointSize
+        public Size SurfacePointRelativeSize
         {
-            get => (Size)GetValue(SurfacePointSizeProperty);
-            set => SetValue(SurfacePointSizeProperty, value);
+            get => (Size)GetValue(SurfacePointRelativeSizeProperty);
+            set => SetValue(SurfacePointRelativeSizeProperty, value);
         }
 
-        public static readonly DependencyProperty SurfacePointSizeProperty = DependencyProperty.Register(nameof(SurfacePointSize), typeof(Size), typeof(SpiralSphere), new FrameworkPropertyMetadata(new Size(2, 2), FrameworkPropertyMetadataOptions.AffectsRender, OnPointSizeChanged));
+        public static readonly DependencyProperty SurfacePointRelativeSizeProperty = DependencyProperty.Register(nameof(SurfacePointRelativeSize), typeof(Size), typeof(SpiralSphere), new FrameworkPropertyMetadata(new Size(0.02, 0.02), FrameworkPropertyMetadataOptions.AffectsRender, OnPointSizeChanged));
 
         private static void OnPointSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -52,7 +46,7 @@ namespace XamlSpinners
             self.OnPointSizeChanged(e);
         }
 
-        protected void OnPointSizeChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnPointSizeChanged(DependencyPropertyChangedEventArgs e)
         {
             SetUpSurface();
         }
@@ -64,7 +58,7 @@ namespace XamlSpinners
             set => SetValue(SpiralPatternProperty, value);
         }
 
-        public static readonly DependencyProperty SpiralPatternProperty = DependencyProperty.Register(nameof(SpiralPattern), typeof(Pattern), typeof(SpiralSphere), new FrameworkPropertyMetadata(Pattern.LinearSpiral, FrameworkPropertyMetadataOptions.AffectsRender, OnSpiralPatternChanged));
+        public static readonly DependencyProperty SpiralPatternProperty = DependencyProperty.Register(nameof(SpiralPattern), typeof(Pattern), typeof(SpiralSphere), new FrameworkPropertyMetadata(Pattern.LinearSpiral, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsArrange, OnSpiralPatternChanged));
 
         private static void OnSpiralPatternChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -92,7 +86,7 @@ namespace XamlSpinners
             self.OnAzimuthalToInclineRatioChanged(e);
         }
 
-        protected void OnAzimuthalToInclineRatioChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnAzimuthalToInclineRatioChanged(DependencyPropertyChangedEventArgs e)
         {
             SetUpSurface();
         }
@@ -112,28 +106,29 @@ namespace XamlSpinners
             self.OnCameraDirectionChanged(e);
         }
 
-        protected void OnCameraDirectionChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnCameraDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
             SetUpCamera();
         }
 
+        public double DepthExaggeration
+        {
+            get => (double)GetValue(DepthExaggerationProperty);
+            set => SetValue(DepthExaggerationProperty, value);
+        }
 
-        //public double CameraDistanceMultiplier
-        //{
-        //    get => (double)GetValue(CameraDistanceMultiplierProperty);
-        //    set => SetValue(CameraDistanceMultiplierProperty, value);
-        //}
+        public static readonly DependencyProperty DepthExaggerationProperty = DependencyProperty.Register(nameof(DepthExaggeration), typeof(double), typeof(SpiralSphere), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, OnDepthExaggerationChanged));
 
-        //public static readonly DependencyProperty CameraDistanceMultiplierProperty = DependencyProperty.Register(nameof(CameraDistanceMultiplier), typeof(double), typeof(SpiralSphere), new FrameworkPropertyMetadata(6.0, FrameworkPropertyMetadataOptions.AffectsRender, OnCameraDistanceMultiplierChanged));
+        private static void OnDepthExaggerationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not SpiralSphere self) return;
+            self.OnDepthExaggerationChanged(e);
+        }
 
-        //private static void OnCameraDistanceMultiplierChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    if (d is not SpiralSphere self) return;
-        //    self.OnCameraDistanceMultiplierChanged(e);
-        //}
-
-        //protected void OnCameraDistanceMultiplierChanged(DependencyPropertyChangedEventArgs e) { }
-
+        protected virtual void OnDepthExaggerationChanged(DependencyPropertyChangedEventArgs e)
+        {
+            rootCanvas.DepthExaggeration = DepthExaggeration;
+        }
 
         public Vector3 UpDirection
         {
@@ -239,19 +234,6 @@ namespace XamlSpinners
             SetUpAnimation();
         }
 
-        private void SetUpSurface()
-        {
-            var size = Math.Max(ActualWidth, ActualHeight);
-            var radius = size / 2;
-
-            var surfacePoints = CreateSurfacePoints(SurfacePointCount, radius, AzimuthalToInclineRatio, SpiralPattern);
-            var surfaceGroup = CreateSurfaceGroup(surfacePoints, SurfacePointSize, Palette);
-            surfaceGroup.Transform = new RotateTransform(AxisOfRation, 0, new Vector3(0,0,0));
-            rootCanvas.SurfaceGroup = surfaceGroup;
-
-            SetUpAnimation();
-        }
-
         private void SetUpCamera()
         {
             var size = Math.Max(ActualWidth, ActualHeight);
@@ -262,6 +244,8 @@ namespace XamlSpinners
             var cameraDistance = (float)(radius / Math.Tan(fovRad / 2) / Math.Cos(fovRad / 2));
             var cameraPosition = Vector3.Multiply(cameraDistance, Vector3.Normalize(CameraDirection));
 
+            if (cameraDistance < radius) throw new InvalidOperationException("Camera is inside the sphere.");
+
             rootCanvas.Camera = new Camera()
             {
                 CameraPosition = cameraPosition,
@@ -271,8 +255,27 @@ namespace XamlSpinners
             };
         }
 
+        private void SetUpSurface()
+        {
+            var size = Math.Max(ActualWidth, ActualHeight);
+            var radius = size / 2;
+
+            var surfacePoints = CreateSurfacePoints(SurfacePointCount, radius, AzimuthalToInclineRatio, SpiralPattern);
+
+            var surfacePointSize = new Size(SurfacePointRelativeSize.Width * radius, SurfacePointRelativeSize.Height * radius);
+
+            var surfaceGroup = CreateSurfaceGroup(surfacePoints, surfacePointSize, Palette);
+            surfaceGroup.Transform = new RotateTransform(AxisOfRation, 0, new Vector3(0,0,0));
+            rootCanvas.SurfaceGroup = surfaceGroup;
+
+            SetUpAnimation(); // animation depends on surfacegroup
+        }
+
         private void SetUpAnimation()
         {
+            ActiveStoryboard.Stop(this);
+            ActiveStoryboard.Children.Clear();
+
             var angleAnimation = new DoubleAnimation
             {
                 From = 0,
@@ -319,14 +322,16 @@ namespace XamlSpinners
                 $"{nameof(SurfaceCanvas.SurfaceGroup)}.{nameof(SurfaceElement.Transform)}.{nameof(RotateTransform.Rotation)}.{nameof(AxisAngleRotation.Angle)}"
             ));
 
+            HasClock = false;
             UpdateActiveStoryboard();
         }
 
         private static List<Vector3> CreateSurfacePoints(int pointCount, double sphereRadius, double azimuthToInclineRatio, Pattern pattern = Pattern.EqualArea)
         {
             var spherePoints = new List<Vector3>(pointCount);
+            pointCount += 1; // exclude the last point to avoid a gap in the surface
 
-            for (int i = 1; i <= pointCount; i++)
+            for (int i = 1; i < pointCount; i++)
             {
                 // Inclination needs to be in the range [0, π] but how to distribute the points? If you do a linear distribution, you get a lot of points near the poles and not many near the equator, same as working with latitude and longitude (polar crowding)
                 (var azimuthalAngle, var inclinationAngle) = pattern switch
@@ -378,7 +383,7 @@ namespace XamlSpinners
             }
         }
 
-        private static SurfaceElementGroup CreateSurfaceGroup(List<Vector3> spherePoints, Size dotSize, IList<Brush> palette)
+        private static SurfaceElementGroup CreateSurfaceGroup(List<Vector3> sufacePoints, Size surfacePointSize, IList<Brush> palette)
         {
             var group = new SurfaceElementGroup();
 
@@ -388,17 +393,17 @@ namespace XamlSpinners
             var (fromHue, fromSaturation, fromLightness) = ColorUtils.RgbToHsl(brush1.Color);
             var (toHue, toSaturation, toLightness) = ColorUtils.RgbToHsl(brush2.Color);
 
-            for (int i = 0; i < spherePoints.Count; i++)
+            for (int i = 0; i < sufacePoints.Count; i++)
             {
-                var point = spherePoints[i];
+                var point = sufacePoints[i];
 
-                var color = ColorUtils.RgbFromHslProgress(fromHue, toHue, fromSaturation, toSaturation, fromLightness, toLightness, (i / (double)spherePoints.Count));
+                var color = ColorUtils.RgbFromHslProgress(fromHue, toHue, fromSaturation, toSaturation, fromLightness, toLightness, (i / (double)sufacePoints.Count));
                 var brush = new SolidColorBrush(color);
 
                 var dot = new SurfaceElement()
                 {
                     Fill = brush,
-                    Size = dotSize,
+                    Size = surfacePointSize,
                     Position = point
                 };
 
@@ -406,6 +411,17 @@ namespace XamlSpinners
             }
 
             return group;
+        }
+
+        #endregion
+
+        #region Method Overrides
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            SetUpCamera();
+            SetUpSurface();
         }
 
         #endregion

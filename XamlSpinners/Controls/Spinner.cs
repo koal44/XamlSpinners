@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,18 +13,25 @@ namespace XamlSpinners
     {
         #region Data
 
-        internal Storyboard ActiveStoryboard { get; set; }
+        public Storyboard ActiveStoryboard { get; set; }
+        public bool HasClock { get; set;} = false;
 
         #endregion
 
         #region Constructors
+
+        static Spinner()
+        {
+            //DefaultStyleKeyProperty.OverrideMetadata(typeof(Spinner), new FrameworkPropertyMetadata(typeof(Spinner)));
+            TypeDescriptor.AddAttributes(typeof(SpiralSphere), new TypeConverterAttribute(typeof(PaletteConverter)));
+        }
 
         public Spinner()
         {
             Palette ??= new ObservableCollection<Brush>()
             {
                 new SolidColorBrush(Utils.ColorUtils.HslToRgb(270, 1, 0.7)),
-                new SolidColorBrush(Utils.ColorUtils.HslToRgb(210, 1, 0.3)),
+                new SolidColorBrush(Utils.ColorUtils.HslToRgb(10, 1, 0.3)),
             };
             ActiveStoryboard = new Storyboard();
         }
@@ -46,11 +54,12 @@ namespace XamlSpinners
             self.OnIsActiveChanged(e);
         }
 
-        internal virtual void OnIsActiveChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnIsActiveChanged(DependencyPropertyChangedEventArgs e)
         {
             UpdateActiveStoryboard();
         }
 
+        [TypeConverter(typeof(PaletteConverter))]
         public ObservableCollection<Brush> Palette
         {
             get => (ObservableCollection<Brush>)GetValue(PaletteProperty);
@@ -183,12 +192,34 @@ namespace XamlSpinners
 
         #region Methods
 
-        internal void UpdateActiveStoryboard()
+        protected void UpdateActiveStoryboard()
         {
+            if (ActiveStoryboard == null) return;
+
             if (IsActive)
-                ActiveStoryboard?.Begin();
+            {
+                if (!HasClock)
+                {
+                    ActiveStoryboard.Begin(this, true);
+                    HasClock = true;
+                    return;
+                }
+
+                //var state = ActiveStoryboard.GetCurrentState(this);
+                ActiveStoryboard.Resume(this);
+
+
+                //if (state == ClockState.Stopped)
+                //{
+                //    ActiveStoryboard.Resume(this);
+                //}
+            }
             else
-                ActiveStoryboard?.Stop();
+            {
+                if (!HasClock) return;
+                if (ActiveStoryboard.GetCurrentState(this) == ClockState.Stopped) return;
+                ActiveStoryboard.Pause(this);
+            }
         }
 
         #endregion

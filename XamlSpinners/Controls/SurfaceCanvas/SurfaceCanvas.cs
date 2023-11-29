@@ -135,6 +135,8 @@ namespace XamlSpinners
         protected override void OnRender(DrawingContext drawingContext)
         {
             if (SurfaceGroup == null) return;
+            if (Camera == null) return;
+            if (_rect.IsEmpty || _rect.Width == 0 || _rect.Height == 0) return;
 
             var modelToWorldMatrix = SurfaceGroup.Transform.Value;
             var modelToScreenMatrix = modelToWorldMatrix * _worldToScreenMatrix;

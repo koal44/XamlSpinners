@@ -10,6 +10,12 @@ namespace XamlSpinners
 {
     public partial class SpiralSphere : Spinner
     {
+        #region Data
+
+        private readonly SurfaceElementGroup _surface;
+
+        #endregion
+
         #region Dependency Properties
 
         public int SurfacePointCount
@@ -108,7 +114,7 @@ namespace XamlSpinners
 
         protected virtual void OnCameraDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
-            SetUpCamera();
+            SetUpCameraPosition();
         }
 
         public double DepthExaggeration
@@ -127,7 +133,7 @@ namespace XamlSpinners
 
         protected virtual void OnDepthExaggerationChanged(DependencyPropertyChangedEventArgs e)
         {
-            rootCanvas.DepthExaggeration = DepthExaggeration;
+            RootCanvas.DepthExaggeration = DepthExaggeration;
         }
 
         public Vector3 UpDirection
@@ -146,7 +152,7 @@ namespace XamlSpinners
 
         protected void OnUpDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
-            SetUpCamera();
+            RootCanvas.Camera.UpDirection = UpDirection;
         }
 
 
@@ -166,7 +172,8 @@ namespace XamlSpinners
 
         protected void OnFieldOfViewChanged(DependencyPropertyChangedEventArgs e)
         {
-            SetUpCamera();
+            RootCanvas.Camera.FieldOfView = FieldOfView;
+            SetUpCameraPosition();
         }
 
 
@@ -187,7 +194,7 @@ namespace XamlSpinners
         protected void OnAxisOfRationChanged(DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is not Vector3 axis) return;
-            if (rootCanvas.SurfaceGroup.Transform is not RotateTransform transform) 
+            if (RootCanvas.SurfaceGroup.Transform is not RotateTransform transform) 
                 throw new InvalidOperationException("The SurfaceGroup's transform is not a RotateTransform.");
             transform.Rotation.Axis = axis;
         }
@@ -210,7 +217,7 @@ namespace XamlSpinners
         protected void OnStretchChanged(DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is not Stretch newStretch) return;
-            rootCanvas.Stretch = newStretch;
+            RootCanvas.Stretch = newStretch;
         }
 
         #endregion
@@ -219,8 +226,21 @@ namespace XamlSpinners
 
         public SpiralSphere()
         {
-            InitializeComponent();
             Loaded += OnLoaded;
+            InitializeComponent();
+
+            _surface = new SurfaceElementGroup()
+            {
+                Transform = new RotateTransform(AxisOfRation, 0, new Vector3(0, 0, 0))
+            };
+
+            RootCanvas.SurfaceGroup = _surface;
+            RootCanvas.Camera = new Camera()
+            {
+                TargetPosition = new Vector3(0, 0, 0),
+                UpDirection = UpDirection,
+                FieldOfView = FieldOfView,
+            };
         }
 
         #endregion
@@ -229,12 +249,12 @@ namespace XamlSpinners
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            SetUpCamera();
+            SetUpCameraPosition();
             SetUpSurface();
             SetUpAnimation();
         }
 
-        private void SetUpCamera()
+        private void SetUpCameraPosition()
         {
             var size = Math.Max(ActualWidth, ActualHeight);
             var radius = size / 2;
@@ -242,17 +262,9 @@ namespace XamlSpinners
             var fovRad = FieldOfView * Math.PI / 180;
 
             var cameraDistance = (float)(radius / Math.Tan(fovRad / 2) / Math.Cos(fovRad / 2));
-            var cameraPosition = Vector3.Multiply(cameraDistance, Vector3.Normalize(CameraDirection));
+            var cameraPosition = Vector3.Multiply(-cameraDistance, Vector3.Normalize(CameraDirection));
 
-            if (cameraDistance < radius) throw new InvalidOperationException("Camera is inside the sphere.");
-
-            rootCanvas.Camera = new Camera()
-            {
-                CameraPosition = cameraPosition,
-                TargetPosition = new Vector3(0, 0, 0),
-                UpDirection = UpDirection,
-                FieldOfView = FieldOfView,
-            };
+            RootCanvas.Camera.CameraPosition = cameraPosition; 
         }
 
         private void SetUpSurface()
@@ -264,17 +276,11 @@ namespace XamlSpinners
 
             var surfacePointSize = new Size(SurfacePointRelativeSize.Width * radius, SurfacePointRelativeSize.Height * radius);
 
-            var surfaceGroup = CreateSurfaceGroup(surfacePoints, surfacePointSize, Palette);
-            surfaceGroup.Transform = new RotateTransform(AxisOfRation, 0, new Vector3(0,0,0));
-            rootCanvas.SurfaceGroup = surfaceGroup;
-
-            SetUpAnimation(); // animation depends on surfacegroup
+            UpdateSurfaceGroup(surfacePoints, surfacePointSize);
         }
 
         private void SetUpAnimation()
         {
-            ActiveStoryboard.Stop(this);
-            ActiveStoryboard.Children.Clear();
 
             var angleAnimation = new DoubleAnimation
             {
@@ -317,12 +323,11 @@ namespace XamlSpinners
                 Method 3: Targeting via Property Path on a Visual Element
                 - Works: 'rootCanvas' is part of the visual tree and can be targeted by using a more complex property path.
             */
-            Storyboard.SetTarget(angleAnimation, rootCanvas);
+            Storyboard.SetTarget(angleAnimation, RootCanvas);
             Storyboard.SetTargetProperty(angleAnimation, new PropertyPath(
                 $"{nameof(SurfaceCanvas.SurfaceGroup)}.{nameof(SurfaceElement.Transform)}.{nameof(RotateTransform.Rotation)}.{nameof(AxisAngleRotation.Angle)}"
             ));
 
-            HasClock = false;
             UpdateActiveStoryboard();
         }
 
@@ -383,34 +388,33 @@ namespace XamlSpinners
             }
         }
 
-        private static SurfaceElementGroup CreateSurfaceGroup(List<Vector3> sufacePoints, Size surfacePointSize, IList<Brush> palette)
+        private void UpdateSurfaceGroup(List<Vector3> sufacePoints, Size surfacePointSize)
         {
-            var group = new SurfaceElementGroup();
-
-            if (palette.Count < 1 || palette[0] is not SolidColorBrush brush1) { brush1 = new SolidColorBrush(Colors.Red); }
-            if (palette.Count < 2 || palette[1] is not SolidColorBrush brush2) { brush2 = brush1; }
+            var altColor = Foreground is SolidColorBrush brush ? brush.Color : Colors.Red;
+            if (Palette.Count < 1 || Palette[0] is not SolidColorBrush brush1) { brush1 = new SolidColorBrush(altColor); }
+            if (Palette.Count < 2 || Palette[1] is not SolidColorBrush brush2) { brush2 = brush1; }
 
             var (fromHue, fromSaturation, fromLightness) = ColorUtils.RgbToHsl(brush1.Color);
             var (toHue, toSaturation, toLightness) = ColorUtils.RgbToHsl(brush2.Color);
+
+            _surface.Children.Clear();
 
             for (int i = 0; i < sufacePoints.Count; i++)
             {
                 var point = sufacePoints[i];
 
                 var color = ColorUtils.RgbFromHslProgress(fromHue, toHue, fromSaturation, toSaturation, fromLightness, toLightness, (i / (double)sufacePoints.Count));
-                var brush = new SolidColorBrush(color);
+                var progressBrush = new SolidColorBrush(color);
 
                 var dot = new SurfaceElement()
                 {
-                    Fill = brush,
+                    Fill = progressBrush,
                     Size = surfacePointSize,
                     Position = point
                 };
 
-                group.Children.Add(dot);
+                _surface.Children.Add(dot);
             }
-
-            return group;
         }
 
         #endregion
@@ -420,7 +424,7 @@ namespace XamlSpinners
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            SetUpCamera();
+            SetUpCameraPosition();
             SetUpSurface();
         }
 

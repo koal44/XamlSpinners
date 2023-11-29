@@ -85,7 +85,10 @@ namespace XamlSpinners.Demo
         {
             Grid grid;
             Slider? slider = null;
-            TextBlock valueDisplay = new() { Margin = new Thickness(10, 0, 0, 0) };
+            TextBlock valueDisplay = new() 
+            { 
+                Margin = new Thickness(10, 0, 0, 0),
+            };
 
             void updateNumericDisplayText()
             {
@@ -157,6 +160,7 @@ namespace XamlSpinners.Demo
                     };
 
                     updateVectorDisplayText();
+                    valueDisplay.Width = 100;
 
                     xSlider.ValueChanged += updateVectorDisplay;
                     ySlider.ValueChanged += updateVectorDisplay;

@@ -31,63 +31,30 @@
                         Content="{Binding SelectedSpinnerConfig.ConfigurableSpinner, Mode=OneWay}" />
       </Border>
 
-      <ContentControl x:Name="selectedAdjustmentsContentControl"
-                      Grid.Column="1"
-                      MinWidth="300"
-                      Margin="20,0,0,0"
-                      Content="{Binding SelectedSpinnerConfig.AdjustablePropertiesGrid, Mode=OneWay}"
-                      Foreground="White">
-        <ContentControl.Resources>
-          <Style TargetType="Slider">
-            <Setter Property="MinWidth" Value="50" />
-          </Style>
-          <!--<Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White" />
-          </Style>-->
-        </ContentControl.Resources>
-      </ContentControl>
+      <ScrollViewer Grid.Column="1"
+                    Margin="20,0,0,0"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
+        <ContentControl x:Name="selectedSpinnerConfigContentControl"
+                        MinWidth="300"
+                        Margin="5"
+                        Content="{Binding SelectedSpinnerConfig.AdjusterControlsGrid, Mode=OneWay}"
+                        Foreground="White">
+          <ContentControl.Resources>
+            <Style TargetType="Slider">
+              <Setter Property="MinWidth" Value="50" />
+            </Style>
+          </ContentControl.Resources>
+        </ContentControl>
+      </ScrollViewer>
     </Grid>
-
 
     <WrapPanel Name="ThumbnailPanel"
                Grid.Row="2"
                Margin="0,20,0,0">
-      <spinners:SpiralSphere Width="60" Palette="White"
-                             Height="60" />
+      <spinners:SpiralSphere Width="60"
+                             Height="60"
+                             Palette="White" />
     </WrapPanel>
-
-    <!--
-    <ListBox Grid.Row="2"
-             HorizontalAlignment="Stretch"
-             VerticalAlignment="Stretch"
-             Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=Window}}">
-
-        ItemsSource="{Binding SpinnerConfigs}"
-        SelectedItem="{Binding SelectedSpinnerConfig}"
-
-
-      <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-          <WrapPanel Orientation="Horizontal" />
-        </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <Border
-                  Margin="5"
-                  Padding="5"
-                  BorderBrush="White"
-                  BorderThickness="1">
-            <StackPanel>
-              <TextBlock Text="{Binding ThumbnailSpinner}" />
-              <ContentControl Width="100"
-                              Height="100"
-                              Content="{Binding ThumbnailSpinner, Mode=OneWay}" />
-            </StackPanel>
-          </Border>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
-    -->
   </Grid>
 </Window>

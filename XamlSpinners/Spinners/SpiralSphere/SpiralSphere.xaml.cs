@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
@@ -425,6 +426,11 @@ namespace XamlSpinners
         {
             base.OnRenderSizeChanged(sizeInfo);
             SetUpCameraPosition();
+            SetUpSurface();
+        }
+
+        protected override void OnPaletteCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
             SetUpSurface();
         }
 

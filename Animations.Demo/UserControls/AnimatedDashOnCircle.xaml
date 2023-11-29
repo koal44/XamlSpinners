@@ -10,5 +10,5 @@
              d:DesignWidth="200"
              Foreground="White"
              mc:Ignorable="d">
-    <Grid Name="RootContainer" />
+  <Grid Name="RootContainer" />
 </UserControl>

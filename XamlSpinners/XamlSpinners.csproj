@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Controls\SurfaceCanvas\SurfaceElementCollection2.cs" />
+    <Compile Remove="scratch\Clock.cs" />
   </ItemGroup>
 
   <ItemGroup>

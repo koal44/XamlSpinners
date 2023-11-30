@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace XamlSpinners.Demo
 {
@@ -15,6 +16,8 @@ namespace XamlSpinners.Demo
         {
             ThumbnailSpinner = (Spinner?)Activator.CreateInstance(spinnerType) 
                 ?? throw new NullReferenceException(nameof(ThumbnailSpinner));
+            ThumbnailSpinner.Palette[0] = Brushes.White;
+            ThumbnailSpinner.Palette[1] = Brushes.White;
 
             ConfigurableSpinner = (Spinner?)Activator.CreateInstance(spinnerType) 
                 ?? throw new NullReferenceException(nameof(ConfigurableSpinner));

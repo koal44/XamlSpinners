@@ -38,7 +38,6 @@ namespace XamlSpinners
             SetUpSurface();
         }
 
-
         public Size SurfacePointRelativeSize
         {
             get => (Size)GetValue(SurfacePointRelativeSizeProperty);
@@ -52,12 +51,10 @@ namespace XamlSpinners
             if (d is not SpiralSphere self) return;
             self.OnPointSizeChanged(e);
         }
-
         protected virtual void OnPointSizeChanged(DependencyPropertyChangedEventArgs e)
         {
             SetUpSurface();
         }
-
 
         public Pattern SpiralPattern
         {
@@ -78,7 +75,6 @@ namespace XamlSpinners
             SetUpSurface();
         }
 
-
         public double AzimuthalToInclineRatio
         {
             get => (double)GetValue(AzimuthalToInclineRatioProperty);
@@ -98,7 +94,6 @@ namespace XamlSpinners
             SetUpSurface();
         }
 
-
         public Vector3 CameraDirection
         {
             get => (Vector3)GetValue(CameraDirectionProperty);
@@ -112,7 +107,6 @@ namespace XamlSpinners
             if (d is not SpiralSphere self) return;
             self.OnCameraDirectionChanged(e);
         }
-
         protected virtual void OnCameraDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
             SetUpCameraPosition();
@@ -151,11 +145,10 @@ namespace XamlSpinners
             self.OnUpDirectionChanged(e);
         }
 
-        protected void OnUpDirectionChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnUpDirectionChanged(DependencyPropertyChangedEventArgs e)
         {
             RootCanvas.Camera.UpDirection = UpDirection;
         }
-
 
         public float FieldOfView
         {
@@ -171,12 +164,11 @@ namespace XamlSpinners
             self.OnFieldOfViewChanged(e);
         }
 
-        protected void OnFieldOfViewChanged(DependencyPropertyChangedEventArgs e)
+        protected virtual void OnFieldOfViewChanged(DependencyPropertyChangedEventArgs e)
         {
             RootCanvas.Camera.FieldOfView = FieldOfView;
             SetUpCameraPosition();
         }
-
 
         public Vector3 AxisOfRation
         {
@@ -199,7 +191,6 @@ namespace XamlSpinners
                 throw new InvalidOperationException("The SurfaceGroup's transform is not a RotateTransform.");
             transform.Rotation.Axis = axis;
         }
-
 
         public Stretch Stretch
         {
@@ -404,7 +395,7 @@ namespace XamlSpinners
             {
                 var point = sufacePoints[i];
 
-                var color = ColorUtils.RgbFromHslProgress(fromHue, toHue, fromSaturation, toSaturation, fromLightness, toLightness, (i / (double)sufacePoints.Count));
+                var color = ColorUtils.InterpolateHsl(fromHue, toHue, fromSaturation, toSaturation, fromLightness, toLightness, (i / (double)sufacePoints.Count));
                 var progressBrush = new SolidColorBrush(color);
 
                 var dot = new SurfaceElement()

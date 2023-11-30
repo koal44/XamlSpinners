@@ -34,6 +34,7 @@ namespace XamlSpinners.Tests
             new HslAndRgbData(300, 20,  20,  61,  41,  61),
             new HslAndRgbData(300, 50,  50,  191, 64,  191),
             new HslAndRgbData(300, 80,  80,  245, 163, 245),
+            new HslAndRgbData(180, 100, 0,   0,   0,   0),    // Expected to be black due to lightness = 0
         }.Select(r => new HslAndRgbData[] {r});
 
 

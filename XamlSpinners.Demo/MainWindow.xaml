@@ -11,6 +11,7 @@
         d:DataContext="{d:DesignInstance local:MainWindowViewModel,
                                          IsDesignTimeCreatable=True}"
         Background="#ff1e1e1e"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
   <Grid Margin="20">
     <Grid.RowDefinitions>
@@ -49,12 +50,35 @@
       </ScrollViewer>
     </Grid>
 
-    <WrapPanel Name="ThumbnailPanel"
-               Grid.Row="2"
-               Margin="0,20,0,0">
-      <spinners:SpiralSphere Width="60"
-                             Height="60"
-                             Palette="White" />
-    </WrapPanel>
+    <ListBox Name="ThumbnailListBox"
+             Grid.Row="2"
+             Margin="0,20,0,0"
+             Background="Transparent"
+             BorderThickness="0"
+             ItemsSource="{Binding ThumbnailSpinners}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Button Command="{Binding DataContext.ThumbnailClickedCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                  CommandParameter="{Binding}">
+            <ContentControl Width="60"
+                            Height="60"
+                            Content="{Binding}" />
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Border Background="Transparent">
+                  <ContentPresenter Content="{TemplateBinding Content}"/>
+                </Border>
+              </ControlTemplate>
+            </Button.Template>
+          </Button>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
   </Grid>
 </Window>

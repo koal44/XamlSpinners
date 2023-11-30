@@ -81,11 +81,15 @@ namespace XamlSpinners.Utils
         /// <param name="toLightness">End lightness [0, 1].</param>
         /// <param name="progress">Progress ratio [0, 1].</param>
         /// <returns>Interpolated RGB color.</returns>
-        public static Color RgbFromHslProgress(double fromHue, double toHue, double fromSaturation, double toSaturation, double fromLightness, double toLightness, double progress)
+        public static Color InterpolateHsl(double fromHue, double toHue, double fromSaturation, double toSaturation, double fromLightness, double toLightness, double progress)
         {
             var hue = fromHue + (toHue - fromHue) * progress;
             var saturation = fromSaturation + (toSaturation - fromSaturation) * progress;
             var lightness = fromLightness + (toLightness - fromLightness) * progress;
+
+            hue = Math.Clamp(hue, 0, 360);
+            saturation = Math.Clamp(saturation, 0, 1);
+            lightness = Math.Clamp(lightness, 0, 1);
 
             return HslToRgb(hue, saturation, lightness);
         }

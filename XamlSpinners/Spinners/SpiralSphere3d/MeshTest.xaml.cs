@@ -14,7 +14,7 @@ namespace XamlSpinners
             var dot = new GeometryModel3D()
             {
                 Material = new DiffuseMaterial(Brushes.Red),
-                Geometry = ThreeDUtils.CreateBlockMesh2(new Point3D(1,1,1), new Size3D(2,2,2))
+                Geometry = ThreeDUtils.CreateBlockMesh(new Point3D(1,1,1), new Size3D(2,2,2))
             };
             extraModel.Content = dot;
         }

@@ -17,7 +17,7 @@ namespace XamlSpinners.Utils
         //     3--------2
         //    /
         //   Z
-        public static MeshGeometry3D CreateBlockMesh2(Point3D center, Size3D size)
+        public static MeshGeometry3D CreateBlockMesh(Point3D center, Size3D size)
         {
             var mesh = new MeshGeometry3D();
 
@@ -61,7 +61,6 @@ namespace XamlSpinners.Utils
 
             return mesh;
         }
-
 
         public static MeshGeometry3D ParseMesh(string positions, string triangleIndices)
         {

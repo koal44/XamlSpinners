@@ -1,0 +1,211 @@
+﻿<UserControl x:Class="Shapes.Demo.DashedRectangleUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Shapes.Demo"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
+             xmlns:shapes="clr-namespace:Shapes;assembly=Shapes"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             d:DesignHeight="450"
+             d:DesignWidth="400"
+             Background="White"
+             Foreground="Black"
+             mc:Ignorable="d">
+  <StackPanel HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Orientation="Vertical">
+    <StackPanel.Resources>
+      <ObjectDataProvider x:Key="penLineCapEnum"
+                          MethodName="GetValues"
+                          ObjectType="{x:Type sys:Enum}">
+        <ObjectDataProvider.MethodParameters>
+          <x:Type TypeName="media:PenLineCap" />
+        </ObjectDataProvider.MethodParameters>
+      </ObjectDataProvider>
+      <ObjectDataProvider x:Key="stretchEnum"
+                          MethodName="GetValues"
+                          ObjectType="{x:Type sys:Enum}">
+        <ObjectDataProvider.MethodParameters>
+          <x:Type TypeName="media:Stretch" />
+        </ObjectDataProvider.MethodParameters>
+      </ObjectDataProvider>
+      <ObjectDataProvider x:Key="anchorEnum"
+                          MethodName="GetValues"
+                          ObjectType="{x:Type sys:Enum}">
+        <ObjectDataProvider.MethodParameters>
+          <x:Type TypeName="shapes:Anchor" />
+        </ObjectDataProvider.MethodParameters>
+      </ObjectDataProvider>
+    </StackPanel.Resources>
+    <Grid Width="150"
+          Height="170">
+      <Border x:Name="shapeContainer"
+              Margin="0,0,0,20"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              BorderThickness="1"
+              Opacity="1">
+        <Border.Style>
+          <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="Black" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding ElementName=showBorderCheckBox, Path=IsChecked}"
+                           Value="False">
+                <Setter Property="BorderBrush" Value="Transparent" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Border.Style>
+        <shapes:DashedRectangle x:Name="dashedRectangle"
+                                Width="100"
+                                Height="100"
+                                DashCount="2"
+                                DashFractionalOffset="0.0"
+                                DashLengthRatio="0.5"
+                                Rx="20"
+                                Ry="20"
+                                Stretch="Fill"
+                                Stroke="Black"
+                                StrokeThickness="2" />
+      </Border>
+    </Grid>
+
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="150" />
+        <ColumnDefinition Width="150" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="5" />
+        <RowDefinition Height="auto" />
+      </Grid.RowDefinitions>
+
+      <!--  ShowBorder  -->
+      <TextBlock Grid.Row="0"
+                 Text="ShowBorder:" />
+      <CheckBox x:Name="showBorderCheckBox"
+                Grid.Row="0"
+                Grid.Column="1"
+                IsChecked="False" />
+
+      <!--  Width  -->
+      <TextBlock Grid.Row="2"
+                 Text="{Binding ElementName=dashedRectangle, Path=Width, StringFormat='Width: {0:N2}'}" />
+      <Slider Grid.Row="2"
+              Grid.Column="1"
+              Maximum="200"
+              Minimum="0"
+              Value="{Binding ElementName=dashedRectangle, Path=Width}" />
+
+      <!--  Height  -->
+      <TextBlock Grid.Row="4"
+                 Text="{Binding ElementName=dashedRectangle, Path=Height, StringFormat='Height: {0:N2}'}" />
+      <Slider Grid.Row="4"
+              Grid.Column="1"
+              Maximum="200"
+              Minimum="0"
+              Value="{Binding ElementName=dashedRectangle, Path=Height}" />
+
+      <!--  Rx  -->
+      <TextBlock Grid.Row="6"
+                 Text="{Binding ElementName=dashedRectangle, Path=Rx, StringFormat='Rx: {0:N2}'}" />
+      <Slider Grid.Row="6"
+              Grid.Column="1"
+              Maximum="50.0"
+              Minimum="0.0"
+              Value="{Binding ElementName=dashedRectangle, Path=Rx}" />
+
+      <!--  Ry  -->
+      <TextBlock Grid.Row="8"
+                 Text="{Binding ElementName=dashedRectangle, Path=Ry, StringFormat='Ry: {0:N2}'}" />
+      <Slider Grid.Row="8"
+              Grid.Column="1"
+              Maximum="50.0"
+              Minimum="0.0"
+              Value="{Binding ElementName=dashedRectangle, Path=Ry}" />
+
+      <!--  Stretch  -->
+      <TextBlock Grid.Row="10"
+                 Text="Stretch:" />
+      <ComboBox Grid.Row="10"
+                Grid.Column="1"
+                ItemsSource="{Binding Source={StaticResource stretchEnum}}"
+                SelectedItem="{Binding ElementName=dashedRectangle, Path=Stretch}" />
+
+      <!--  StrokeThickness  -->
+      <TextBlock Grid.Row="12"
+                 Text="{Binding ElementName=dashedRectangle, Path=StrokeThickness, StringFormat='Stroke Thickness: {0:N2}'}" />
+      <Slider Grid.Row="12"
+              Grid.Column="1"
+              Maximum="30"
+              Minimum="0.1"
+              Value="{Binding ElementName=dashedRectangle, Path=StrokeThickness}" />
+
+      <!--  DashCount  -->
+      <TextBlock Grid.Row="14"
+                 Text="{Binding ElementName=dashedRectangle, Path=DashCount, StringFormat='Dash Count: {0:N0}'}" />
+      <Slider Grid.Row="14"
+              Grid.Column="1"
+              Maximum="50"
+              Minimum="1"
+              Value="{Binding ElementName=dashedRectangle, Path=DashCount}" />
+
+      <!--  DashLengthRatio  -->
+      <TextBlock Grid.Row="16"
+                 Text="{Binding ElementName=dashedRectangle, Path=DashLengthRatio, StringFormat='DashLengthRatio: {0:N2}'}" />
+      <Slider Grid.Row="16"
+              Grid.Column="1"
+              Maximum="1.0"
+              Minimum="0.0"
+              Value="{Binding ElementName=dashedRectangle, Path=DashLengthRatio}" />
+
+      <!--  StrokeDashCap  -->
+      <TextBlock Grid.Row="18"
+                 Text="Dash Cap:" />
+      <ComboBox Grid.Row="18"
+                Grid.Column="1"
+                ItemsSource="{Binding Source={StaticResource penLineCapEnum}}"
+                SelectedItem="{Binding ElementName=dashedRectangle, Path=StrokeDashCap}" />
+
+      <!--  DashFractionalOffset  -->
+      <TextBlock Grid.Row="20"
+                 Text="{Binding ElementName=dashedRectangle, Path=DashFractionalOffset, StringFormat='DashFractionalOffset: {0:N2}'}" />
+      <Slider Grid.Row="20"
+              Grid.Column="1"
+              Maximum="1.00"
+              Minimum="-1.00"
+              Value="{Binding ElementName=dashedRectangle, Path=DashFractionalOffset}" />
+
+      <!--  DashAnchor  -->
+      <TextBlock Grid.Row="22"
+                 Text="Anchor:" />
+      <ComboBox Grid.Row="22"
+                Grid.Column="1"
+                ItemsSource="{Binding Source={StaticResource anchorEnum}}"
+                SelectedItem="{Binding ElementName=dashedRectangle, Path=DashAnchor}" />
+
+    </Grid>
+  </StackPanel>
+</UserControl>

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Shapes
+namespace Shapes.Demo
 {
     public partial class MainWindow : Window
     {

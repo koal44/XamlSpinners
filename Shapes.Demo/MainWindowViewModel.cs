@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace Shapes
+namespace Shapes.Demo
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {

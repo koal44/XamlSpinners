@@ -1,0 +1,25 @@
+﻿<local:Spinner x:Class="XamlSpinners.Grad"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:local="clr-namespace:XamlSpinners"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:shapes="clr-namespace:Shapes;assembly=Shapes"
+               d:DataContext="{d:DesignInstance local:Grad,
+                                                IsDesignTimeCreatable=True}"
+               d:DesignHeight="400"
+               d:DesignWidth="400"
+               mc:Ignorable="d">
+  <Grid>
+    <Ellipse x:Name="OuterEllipse"
+             Stroke="White"
+             StrokeThickness="20" />
+    <Ellipse x:Name="InnerEllipse"
+             Width="200"
+             Height="200"
+             Stroke="White"
+             StrokeThickness="20" />
+
+    <Ellipse x:Name="CenterEllipse" Width="100" Height="100" Fill="White" />
+  </Grid>
+</local:Spinner>

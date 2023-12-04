@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>annotations</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="PropertyPath.cs" />
+    <Compile Remove="PropertyPathWorker.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PropertyPath.cs" />
+    <None Include="PropertyPathWorker.cs" />
+  </ItemGroup>
+
+</Project>

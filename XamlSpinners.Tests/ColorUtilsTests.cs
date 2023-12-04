@@ -67,8 +67,18 @@ namespace XamlSpinners.Tests
             var (h, s, l) = ColorUtils.RgbToHsl(color);
             s *= 100;
             l *= 100;
-            h.Should().BeApproximately(data.H, 0.5);
-            s.Should().BeApproximately(data.S, 0.5);
+
+            if (data.R == data.G && data.G == data.B) // Grayscale
+            {
+                h.Should().BeInRange(0, 360); // Hue can be anything for grayscale
+                s.Should().Be(0); // Saturation should be 0 for grayscale
+            }
+            else
+            {
+                h.Should().BeApproximately(data.H, 0.5);
+                s.Should().BeApproximately(data.S, 0.5);
+            }
+
             l.Should().BeApproximately(data.L, 0.5);
         }
 

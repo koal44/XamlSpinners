@@ -18,6 +18,15 @@ namespace XamlSpinners.Demo
         {
             SpinnerConfigs = new()
             {
+                [typeof(PulseRings)] =
+                new SpinnerConfig(typeof(PulseRings), new List<UIPropAdjuster>
+                {
+                    new UIPropAdjuster(Spinner.IsActiveProperty),
+                    new UIPropAdjuster(Spinner.SpeedProperty, -3, 3),
+                    new UIPropAdjuster(Spinner.PaletteProperty),
+                    new UIPropAdjuster(PulseRings.RingThicknessProperty, 0.01, 0.9),
+                    new UIPropAdjuster(PulseRings.RingGapProperty, 0.01, 0.9),
+                }),
                 [typeof(SpiralSphere3d)] =
                 new SpinnerConfig(typeof(SpiralSphere3d), new List<UIPropAdjuster>
                 {
@@ -44,6 +53,20 @@ namespace XamlSpinners.Demo
                     new UIPropAdjuster(SpiralSphere.AxisOfRationProperty, -1, 1),
                     new UIPropAdjuster(SpiralSphere.StretchProperty),
                 }),
+                //[typeof(Grad)] =
+                //new SpinnerConfig(typeof(Grad), new List<UIPropAdjuster>
+                //{
+                //    new UIPropAdjuster(Grad.GradientProperty),
+                //    new UIPropAdjuster(Grad.BlueOffsetProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.RedOffsetProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.SpreadMethodProperty),
+                //    new UIPropAdjuster(Grad.CenterProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.RadiusXProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.RadiusYProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.GradientOriginProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.StartPointProperty, 0, 1),
+                //    new UIPropAdjuster(Grad.EndPointProperty, 0, 1),
+                //}),
             };
             SelectedSpinnerConfig = SpinnerConfigs.First().Value;
         }

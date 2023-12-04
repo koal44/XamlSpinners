@@ -12,8 +12,10 @@
         mc:Ignorable="d">
   <!--  SizeToContent="WidthAndHeight"  -->
 
-  <Grid >
-    <local:SpiralSphere3d />
+  <Grid>
+    <local:SpiralSphere />
+    <!--<local:PulseRings />-->
+    <!--<local:SpiralSphere3d />-->
     <!--<local:UserControl1 Width="500" Height="500"/>-->
   </Grid>
 </Window>

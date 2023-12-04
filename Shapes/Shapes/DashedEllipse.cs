@@ -40,7 +40,7 @@ namespace Shapes
             set => SetValue(DashLengthRatioProperty, value);
         }
 
-        public static readonly DependencyProperty DashLengthRatioProperty = DependencyProperty.Register(nameof(DashLengthRatio), typeof(double), typeof(DashedEllipse), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsRender, OnDashLengthRatioChanged), OnValidateDashLengthRatio);
+        public static readonly DependencyProperty DashLengthRatioProperty = DependencyProperty.Register(nameof(DashLengthRatio), typeof(double), typeof(DashedEllipse), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender, OnDashLengthRatioChanged), OnValidateDashLengthRatio);
 
         private static void OnDashLengthRatioChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

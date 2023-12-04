@@ -120,9 +120,10 @@ namespace XamlSpinners
 
         private void SetupSurfaceGroup()
         {
+            if (_sphereBlocksGroup == null) return;
+
             var spherePoints = GenerateSpherePoints(BlockCount, _sphereRadius, AzimuthalToInclineRatio);
             UpdateSphereGroup(spherePoints);
-
         }
 
         private static List<Point3D> GenerateSpherePoints(int sphereCount, double SphereRadius, double azimuthalToInclineRatio)

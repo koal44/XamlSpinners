@@ -282,20 +282,19 @@ namespace XamlSpinners
                 RepeatBehavior = RepeatBehavior.Forever
             };
 
-            ActiveStoryboard.Children.Add(angleAnimation);
 
             /*
                 Method 0: Directly animating the property
                 - Works: Easy to understand, but not in line with how Spinners are designed to work.
             */
-            // var animatableRotation = ((RotateTransform)rootCanvas.SurfaceGroup.Transform).Rotation;
-            // animatableRotation.BeginAnimation(AxisAngleRotation.AngleProperty, angleAnimation);
+            //var animatableRotation = ((RotateTransform)RootCanvas.SurfaceGroup.Transform).Rotation;
+            //animatableRotation.BeginAnimation(AxisAngleRotation.AngleProperty, angleAnimation);
 
             /*
                 Method 1: Direct Targeting
                 - Does not work: 'animatableRotation' is not part of the visual tree, so the Storyboard can't find it.
             */
-            // var animatableRotation = ((RotateTransform)rootCanvas.SurfaceGroup.Transform).Rotation;
+            // var animatableRotation = ((RotateTransform)RootCanvas.SurfaceGroup.Transform).Rotation;
             //Storyboard.SetTarget(angleAnimation, animatableRotation);
             //Storyboard.SetTargetProperty(angleAnimation, new PropertyPath(AxisAngleRotation.AngleProperty));
             //ActiveStoryboard.Begin();
@@ -304,7 +303,7 @@ namespace XamlSpinners
                 Method 2: Named Targeting
                 - Works: 'animatableRotation' is registered in the namescope (this), making it findable by the Storyboard.
             */
-            // var animatableRotation = ((RotateTransform)rootCanvas.SurfaceGroup.Transform).Rotation;
+            // var animatableRotation = ((RotateTransform)RootCanvas.SurfaceGroup.Transform).Rotation;
             //var name = "AnimatableRotation";
             //RegisterName(name, animatableRotation);
             //Storyboard.SetTargetName(angleAnimation, name);
@@ -315,6 +314,10 @@ namespace XamlSpinners
                 Method 3: Targeting via Property Path on a Visual Element
                 - Works: 'rootCanvas' is part of the visual tree and can be targeted by using a more complex property path.
             */
+            //var path = $"{nameof(SurfaceCanvas.SurfaceGroup)}.{nameof(SurfaceElement.Transform)}.{nameof(RotateTransform.Rotation)}.{nameof(AxisAngleRotation.Angle)}";
+            //ActiveStoryboard.AddAnimation(angleAnimation, RootCanvas, path, "foo", this);
+
+            ActiveStoryboard.Children.Add(angleAnimation);
             Storyboard.SetTarget(angleAnimation, RootCanvas);
             Storyboard.SetTargetProperty(angleAnimation, new PropertyPath(
                 $"{nameof(SurfaceCanvas.SurfaceGroup)}.{nameof(SurfaceElement.Transform)}.{nameof(RotateTransform.Rotation)}.{nameof(AxisAngleRotation.Angle)}"
@@ -382,6 +385,8 @@ namespace XamlSpinners
 
         private void UpdateSurfaceGroup(List<Vector3> sufacePoints, Size surfacePointSize)
         {
+            if (_surface == null) return;
+
             var altColor = Foreground is SolidColorBrush brush ? brush.Color : Colors.Red;
             if (Palette.Count < 1 || Palette[0] is not SolidColorBrush brush1) { brush1 = new SolidColorBrush(altColor); }
             if (Palette.Count < 2 || Palette[1] is not SolidColorBrush brush2) { brush2 = brush1; }

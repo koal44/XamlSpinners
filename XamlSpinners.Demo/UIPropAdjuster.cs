@@ -205,6 +205,35 @@ namespace XamlSpinners.Demo
                     }
 
                     return (stackPanel, null);
+                case var type when type == typeof(Point):
+                    var pointValue = (Point)spinner.GetValue(_dependencyProperty);
+
+                    grid = new Grid();
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                    var xPointSlider = CreatePointSlider(spinner, "X", pointValue.X, 0);
+                    var yPointSlider = CreatePointSlider(spinner, "Y", pointValue.Y, 1);
+
+                    Action updatePointDisplayText = () =>
+                    {
+                        valueDisplay.Text = $"({xPointSlider.Value:F2}, {yPointSlider.Value:F2})";
+                    };
+
+                    RoutedPropertyChangedEventHandler<double> updatePointDisplay = (s, e) =>
+                    {
+                        updatePointDisplayText();
+                    };
+
+                    updatePointDisplayText();
+
+                    xPointSlider.ValueChanged += updatePointDisplay;
+                    yPointSlider.ValueChanged += updatePointDisplay;
+
+                    grid.Children.Add(xPointSlider);
+                    grid.Children.Add(yPointSlider);
+
+                    return (grid, valueDisplay);
                 default:
                     throw new NotSupportedException($"Type {_dependencyProperty.PropertyType} is not supported.");
             }
@@ -291,5 +320,26 @@ namespace XamlSpinners.Demo
 
             return slider;
         }
+
+        private Slider CreatePointSlider(Spinner spinner, string component, double initialValue, int gridColumn)
+        {
+            var slider = CreateSlider(initialValue);
+
+            slider.ValueChanged += (s, e) =>
+            {
+                var point = (Point)spinner.GetValue(_dependencyProperty);
+                switch (component)
+                {
+                    case "X": point.X = e.NewValue; break;
+                    case "Y": point.Y = e.NewValue; break;
+                }
+                spinner.SetValue(_dependencyProperty, point);
+            };
+
+            Grid.SetColumn(slider, gridColumn);
+
+            return slider;
+        }
+
     }
 }

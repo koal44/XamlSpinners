@@ -32,7 +32,7 @@ namespace Shapes
             set => SetValue(GapLengthProperty, value);
         }
 
-        public static readonly DependencyProperty GapLengthProperty = DependencyProperty.Register(nameof(GapLength), typeof(double), typeof(Ellipse), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsRender));
+        public static readonly DependencyProperty GapLengthProperty = DependencyProperty.Register(nameof(GapLength), typeof(double), typeof(Ellipse), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
         #endregion
 

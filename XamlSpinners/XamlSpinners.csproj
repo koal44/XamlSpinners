@@ -16,4 +16,15 @@
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shapes\Shapes.csproj" />
+    <ProjectReference Include="..\Wpf.Internal\Wpf.Internal.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Spinners\Grad\Grad.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

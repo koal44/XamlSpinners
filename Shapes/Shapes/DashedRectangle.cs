@@ -23,7 +23,7 @@ namespace Shapes
             set => SetValue(RxProperty, value);
         }
 
-        public static readonly DependencyProperty RxProperty = DependencyProperty.Register(nameof(Rx), typeof(double), typeof(DashedRectangle), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsRender, OnRxChanged));
+        public static readonly DependencyProperty RxProperty = DependencyProperty.Register(nameof(Rx), typeof(double), typeof(DashedRectangle), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, OnRxChanged));
 
         private static void OnRxChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -38,7 +38,7 @@ namespace Shapes
             set => SetValue(RyProperty, value);
         }
 
-        public static readonly DependencyProperty RyProperty = DependencyProperty.Register(nameof(Ry), typeof(double), typeof(DashedRectangle), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsRender, OnRyChanged));
+        public static readonly DependencyProperty RyProperty = DependencyProperty.Register(nameof(Ry), typeof(double), typeof(DashedRectangle), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, OnRyChanged));
 
         private static void OnRyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -70,7 +70,7 @@ namespace Shapes
             set => SetValue(DashLengthRatioProperty, value);
         }
 
-        public static readonly DependencyProperty DashLengthRatioProperty = DependencyProperty.Register(nameof(DashLengthRatio), typeof(double), typeof(DashedRectangle), new FrameworkPropertyMetadata(default(double), FrameworkPropertyMetadataOptions.AffectsRender, OnDashLengthRatioChanged), OnValidateDashLengthRatio);
+        public static readonly DependencyProperty DashLengthRatioProperty = DependencyProperty.Register(nameof(DashLengthRatio), typeof(double), typeof(DashedRectangle), new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender, OnDashLengthRatioChanged), OnValidateDashLengthRatio);
 
         private static void OnDashLengthRatioChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

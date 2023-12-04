@@ -86,6 +86,8 @@ namespace XamlSpinners
             {
                 newCollection.CollectionChanged += OnPaletteCollectionChanged;
             }
+
+            OnPaletteCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         protected abstract void OnPaletteCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e);
@@ -177,7 +179,14 @@ namespace XamlSpinners
 
             if (oldSpeed * newSpeed < 0)
             {
-                ReverseStoryboard();
+                //ReverseStoryboard();
+
+                ActiveStoryboard.Reverse(this);
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    UpdateActiveStoryboard();
+                }), DispatcherPriority.ContextIdle);
             }
 
             // set minimum speed to 0.0001 to avoid divide by zero errors
@@ -188,43 +197,27 @@ namespace XamlSpinners
 
         #region Overrides
 
+        // set and activate any storyboard defined in xaml
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             if (GetTemplateChild("ActiveStoryboard") is Storyboard xamlStoryboard)
             {
                 ActiveStoryboard = xamlStoryboard;
+                UpdateActiveStoryboard();
+            }
+
+            var storyboardResource = this.TryFindResource("ActiveStoryboard");
+            if (storyboardResource is Storyboard resourceStoryboard)
+            {
+                ActiveStoryboard = resourceStoryboard;
+                UpdateActiveStoryboard();
             }
         }
 
         #endregion
 
         #region Methods
-
-        protected void UpdateActiveStoryboard()
-        {
-            if (ActiveStoryboard == null) return;
-
-            if (IsActive)
-            {
-                if (!HasClock)
-                {
-                    ActiveStoryboard.Begin(this, true);
-                    HasClock = true;
-                    return;
-                }
-
-                ActiveStoryboard.Resume(this);
-
-            }
-            else
-            {
-                if (!HasClock) return;
-                var state = ActiveStoryboard.GetCurrentState(this);
-                if (state == ClockState.Stopped) return;
-                ActiveStoryboard.Pause(this);
-            }
-        }
 
         private void ReverseStoryboard()
         {
@@ -288,7 +281,31 @@ namespace XamlSpinners
             }), DispatcherPriority.ContextIdle);
         }
 
-        #endregion
+        protected void UpdateActiveStoryboard()
+        {
+            if (ActiveStoryboard == null) return;
 
+            if (IsActive)
+            {
+                if (!HasClock)
+                {
+                    ActiveStoryboard.Begin(this, true);
+                    HasClock = true;
+                    return;
+                }
+
+                ActiveStoryboard.Resume(this);
+
+            }
+            else
+            {
+                if (!HasClock) return;
+                var state = ActiveStoryboard.GetCurrentState(this);
+                if (state == ClockState.Stopped) return;
+                ActiveStoryboard.Pause(this);
+            }
+        }
+
+        #endregion
     }
 }

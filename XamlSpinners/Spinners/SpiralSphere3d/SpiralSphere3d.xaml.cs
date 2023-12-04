@@ -8,6 +8,13 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Media3D;
 using XamlSpinners.Utils;
 
+/*
+ * * 
+ * * Adpated from the CSS sphere by Mamboleoo.
+ * * https://codepen.io/Mamboleoo/post/sphere-css
+ * * 
+ * */
+
 namespace XamlSpinners
 {
     public partial class SpiralSphere3d : Spinner

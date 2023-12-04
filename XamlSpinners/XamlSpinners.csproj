@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Compile Remove="Controls\SurfaceCanvas\SurfaceElementCollection2.cs" />
-    <Compile Remove="scratch\Clock.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shapes\Shapes.csproj" />
-    <ProjectReference Include="..\Wpf.Internal\Wpf.Internal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

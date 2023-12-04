@@ -1,10 +1,14 @@
 ﻿using Shapes;
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
+
+/*
+ * * This is a port of the PulseRings spinner from https://codepen.io/colinhorn/pen/zdNMVy
+ * * 
+ * * Colin Horn
+ * */
 
 namespace XamlSpinners
 {
@@ -48,12 +52,6 @@ namespace XamlSpinners
         {
             DataContext = this;
             InitializeComponent();
-
-            //Loaded += (s, e) =>
-            //{
-            //    var storyboard = FindResource("ActiveStoryboard") as Storyboard;
-            //    storyboard?.Begin();
-            //};
         }
 
         protected override Size ArrangeOverride(Size finalSize)

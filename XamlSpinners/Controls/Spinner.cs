@@ -179,8 +179,6 @@ namespace XamlSpinners
 
             if (oldSpeed * newSpeed < 0)
             {
-                //ReverseStoryboard();
-
                 ActiveStoryboard.Reverse(this);
 
                 Dispatcher.BeginInvoke(new Action(() =>
@@ -218,68 +216,6 @@ namespace XamlSpinners
         #endregion
 
         #region Methods
-
-        private void ReverseStoryboard()
-        {
-            if (ActiveStoryboard is null) return;
-            if (ActiveStoryboard.Children.Count == 0) return;
-
-            if (ActiveStoryboard.GetCurrentTime(this) is not TimeSpan storyTime)
-                throw new Exception($"storyTime was null");
-
-            var duration = TimeSpan.Zero;
-            var reversedStoryboard = new Storyboard();
-
-            foreach (var child in ActiveStoryboard.Children)
-            {
-                if (child is not AnimationTimeline animation)
-                    throw new Exception($"child was not an AnimationTimeline");
-                if (duration == TimeSpan.Zero)
-                    duration = animation.Duration.TimeSpan;
-                if (duration != TimeSpan.Zero && duration != animation.Duration.TimeSpan)
-                    throw new Exception($"duration was not consistent");
-
-                switch (animation)
-                {
-                    case DoubleAnimation doubleAnimation:
-                        var reversedDoubleAnimation = doubleAnimation.Clone();
-                        reversedDoubleAnimation.From = doubleAnimation.To;
-                        reversedDoubleAnimation.To = doubleAnimation.From;
-
-                        Storyboard.SetTarget(reversedDoubleAnimation, Storyboard.GetTarget(doubleAnimation));
-                        Storyboard.SetTargetProperty(reversedDoubleAnimation, Storyboard.GetTargetProperty(doubleAnimation));
-                        reversedStoryboard.Children.Add(reversedDoubleAnimation);
-
-                        break;
-                    case IKeyFrameAnimation keyFrameAnimation:
-                        //keyFrameAnimation.KeyFrames.Reverse();
-                        break;
-                    default:
-                        throw new Exception($"animation reversing is not supported");
-                        // TODO: Add support for other animations:
-                        // ColorAnimation, PointAnimation, RectAnimation, SizeAnimation, ThicknessAnimation,
-                        // DoubleCollection, PathFigureCollection, PointCollection, Point3Collection, VectorCollection
-                }
-            }
-
-            if (duration == TimeSpan.Zero) return;
-
-            var progress = TimeSpan.FromTicks(storyTime.Ticks % duration.Ticks);
-            var reversedProgress = duration - progress;
-
-            ActiveStoryboard.Stop(this);
-            ActiveStoryboard = reversedStoryboard;
-
-            ActiveStoryboard.Begin(this, true);
-            ActiveStoryboard.Seek(this, reversedProgress, TimeSeekOrigin.BeginTime);
-
-            // if isActive is false then reversing triggers it the animation to start again. so we
-            // must delay the update until after the begin/seek have had a chance to change state.
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                UpdateActiveStoryboard();
-            }), DispatcherPriority.ContextIdle);
-        }
 
         protected void UpdateActiveStoryboard()
         {

@@ -95,31 +95,5 @@ namespace XamlSpinners.Demo
             }
         }
 
-        //private readonly Dictionary<string, Action<Spinner, object>> _settersCache = new();
-
-        //private void CacheSetters(Spinner indicator)
-        //{
-        //    var properties = indicator.GetType().GetProperties();
-        //    foreach (var property in properties)
-        //    {
-        //        if (property.CanWrite && property.GetSetMethod() != null)
-        //        {
-        //            _settersCache[property.Name] = (indicator, value) => property.SetValue(indicator, value);
-        //        }
-        //    }
-        //}
-
-        //private void SetPropertyValue(string propertyName, object value)
-        //{
-        //    if (_settersCache.TryGetValue(propertyName, out var setter))
-        //    {
-        //        var currentValue = ConfigurableSpinner.GetType().GetProperty(propertyName)?.GetValue(ConfigurableSpinner);
-        //        if (!Equals(currentValue, value))
-        //        {
-        //            setter(ConfigurableSpinner, value);
-        //        }
-        //    }
-        //}
-
     }
 }

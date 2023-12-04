@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using System.Windows;
 using System.Windows.Media.Animation;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace XamlSpinners.Tests
@@ -31,6 +30,7 @@ namespace XamlSpinners.Tests
                 To = 25,
                 Duration = new Duration(TimeSpan.FromSeconds(5)),
                 AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever
             };
 
             // Act
@@ -64,7 +64,8 @@ namespace XamlSpinners.Tests
                 To = 25,
                 Duration = new Duration(TimeSpan.FromSeconds(5)),
                 AutoReverse = true,
-                BeginTime = TimeSpan.FromSeconds(-3)
+                BeginTime = TimeSpan.FromSeconds(-3),
+                RepeatBehavior = RepeatBehavior.Forever
             };
 
             // Act
@@ -97,7 +98,8 @@ namespace XamlSpinners.Tests
                 To = 25,
                 Duration = new Duration(TimeSpan.FromSeconds(5)),
                 AutoReverse = true,
-                BeginTime = TimeSpan.FromSeconds(-12)
+                BeginTime = TimeSpan.FromSeconds(-12),
+                RepeatBehavior = RepeatBehavior.Forever
             };
 
             // Act
@@ -130,7 +132,8 @@ namespace XamlSpinners.Tests
                 To = 25,
                 Duration = new Duration(TimeSpan.FromSeconds(5)),
                 AutoReverse = true,
-                BeginTime = TimeSpan.FromSeconds(+17)
+                BeginTime = TimeSpan.FromSeconds(+17),
+                RepeatBehavior = RepeatBehavior.Forever
             };
 
             // Act

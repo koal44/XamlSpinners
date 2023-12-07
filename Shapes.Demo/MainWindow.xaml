@@ -12,17 +12,17 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
-    <DockPanel>
-        <ComboBox x:Name="userControlComboBox"
-                  Width="200"
-                  Margin="20"
-                  HorizontalAlignment="Left"
-                  DockPanel.Dock="Top"
-                  ItemsSource="{Binding UserControlNames}"
-                  SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" />
+  <DockPanel>
+    <ComboBox x:Name="userControlComboBox"
+              Width="200"
+              Margin="20"
+              HorizontalAlignment="Left"
+              DockPanel.Dock="Top"
+              ItemsSource="{Binding UserControlNames}"
+              SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" />
 
-        <ContentControl x:Name="userControlViewArea"
-                        Margin="50,20"
-                        Content="{Binding SelectedUserControl}" />
-    </DockPanel>
+    <ContentControl x:Name="userControlViewArea"
+                    Margin="50,20"
+                    Content="{Binding SelectedUserControl}" />
+  </DockPanel>
 </Window>

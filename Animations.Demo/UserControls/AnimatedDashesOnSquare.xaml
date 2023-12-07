@@ -11,32 +11,32 @@
              d:DesignWidth="200"
              Foreground="White"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <Storyboard x:Key="RectangleAnimationStoryboard">
-            <ani:DoubleCollectionAnimation AutoReverse="True"
-                                           RepeatBehavior="Forever"
-                                           Storyboard.TargetName="AnimatedRectangle"
-                                           Storyboard.TargetProperty="StrokeDashArray"
-                                           From="1,1000"
-                                           To="70,1000"
-                                           Duration="0:0:2" />
-        </Storyboard>
-    </UserControl.Resources>
+  <UserControl.Resources>
+    <Storyboard x:Key="RectangleAnimationStoryboard">
+      <ani:DoubleCollectionAnimation AutoReverse="True"
+                                     RepeatBehavior="Forever"
+                                     Storyboard.TargetName="AnimatedRectangle"
+                                     Storyboard.TargetProperty="StrokeDashArray"
+                                     From="1,1000"
+                                     To="70,1000"
+                                     Duration="0:0:2" />
+    </Storyboard>
+  </UserControl.Resources>
 
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource RectangleAnimationStoryboard}" />
-        </EventTrigger>
-    </UserControl.Triggers>
+  <UserControl.Triggers>
+    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+      <BeginStoryboard Storyboard="{StaticResource RectangleAnimationStoryboard}" />
+    </EventTrigger>
+  </UserControl.Triggers>
 
-    <Grid>
-        <Rectangle x:Name="AnimatedRectangle"
-                   Width="100"
-                   Height="100"
-                   Stroke="{Binding Foreground}"
-                   StrokeDashArray="1,1"
-                   StrokeThickness="5" />
-    </Grid>
+  <Grid>
+    <Rectangle x:Name="AnimatedRectangle"
+               Width="100"
+               Height="100"
+               Stroke="{Binding Foreground}"
+               StrokeDashArray="1,1"
+               StrokeThickness="5" />
+  </Grid>
 
 </UserControl>
 

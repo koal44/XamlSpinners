@@ -71,7 +71,7 @@
             <Button.Template>
               <ControlTemplate TargetType="Button">
                 <Border Background="Transparent">
-                  <ContentPresenter Content="{TemplateBinding Content}"/>
+                  <ContentPresenter Content="{TemplateBinding Content}" />
                 </Border>
               </ControlTemplate>
             </Button.Template>

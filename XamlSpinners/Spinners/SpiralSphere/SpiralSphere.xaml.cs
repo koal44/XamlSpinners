@@ -1,11 +1,11 @@
-﻿using System;
+﻿using ColorCraft;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using XamlSpinners.Utils;
 
 namespace XamlSpinners
 {
@@ -391,8 +391,8 @@ namespace XamlSpinners
             if (Palette.Count < 1 || Palette[0] is not SolidColorBrush brush1) { brush1 = new SolidColorBrush(altColor); }
             if (Palette.Count < 2 || Palette[1] is not SolidColorBrush brush2) { brush2 = brush1; }
 
-            var (fromHue, fromSaturation, fromLightness) = ColorUtils.RgbToHsl(brush1.Color);
-            var (toHue, toSaturation, toLightness) = ColorUtils.RgbToHsl(brush2.Color);
+            var fromHsl = Hsl.FromColor(brush1.Color);
+            var toHsl = Hsl.FromColor(brush2.Color);
 
             _surface.Children.Clear();
 
@@ -400,7 +400,8 @@ namespace XamlSpinners
             {
                 var point = sufacePoints[i];
 
-                var color = ColorUtils.InterpolateHsl(fromHue, toHue, fromSaturation, toSaturation, fromLightness, toLightness, (i / (double)sufacePoints.Count));
+                var color = Hsl.Lerp(fromHsl, toHsl, (i / (double)sufacePoints.Count), false).ToColor();
+
                 var progressBrush = new SolidColorBrush(color);
 
                 var dot = new SurfaceElement()

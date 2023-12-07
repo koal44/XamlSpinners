@@ -73,6 +73,7 @@
                           DashFractionalOffset="0.0"
                           DashLengthRatio="0.7"
                           Stroke="White"
+                          StrokeDashCap="{Binding DashCap}"
                           StrokeThickness="14">
       <shapes:DashedEllipse.RenderTransform>
         <RotateTransform />
@@ -89,6 +90,7 @@
                           DashFractionalOffset="0.25"
                           DashLengthRatio="0.7"
                           Stroke="White"
+                          StrokeDashCap="{Binding DashCap}"
                           StrokeThickness="14">
       <shapes:DashedEllipse.RenderTransform>
         <RotateTransform />
@@ -107,6 +109,7 @@
                           DashFractionalOffset="0.25"
                           DashLengthRatio="0.4"
                           Stroke="White"
+                          StrokeDashCap="{Binding DashCap}"
                           StrokeThickness="14">
       <shapes:DashedEllipse.RenderTransform>
         <RotateTransform />
@@ -125,6 +128,7 @@
                           DashFractionalOffset="0.5"
                           DashLengthRatio="0.4"
                           Stroke="White"
+                          StrokeDashCap="{Binding DashCap}"
                           StrokeThickness="14">
       <shapes:DashedEllipse.RenderTransform>
         <RotateTransform />

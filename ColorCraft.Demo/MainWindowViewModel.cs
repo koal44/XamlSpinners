@@ -1,22 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Shapes.Demo
+namespace ColorCraft.Demo
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public MainWindowViewModel()
         {
-            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Dashed Rectangle");
+            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Conic Gradient");
         }
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()
         {
-            ("Ellipse", new EllipseUserControl()),
-            ("Dashed Ellipse", new DashedEllipseUserControl()),
-            ("Dashed Rectangle", new DashedRectangleUserControl()),
+            ("Conic Gradient", new ConicGradientControl()),
+            ("Linear Gradient", new LinearGradientControl()),
         };
 
         public IEnumerable<string> UserControlNames => UserControlsList.Select(x => x.name);
@@ -52,5 +54,4 @@ namespace Shapes.Demo
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }

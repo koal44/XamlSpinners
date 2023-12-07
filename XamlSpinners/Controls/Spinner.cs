@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ColorCraft;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -31,8 +32,8 @@ namespace XamlSpinners
         {
             Palette ??= new ObservableCollection<Brush>()
             {
-                new SolidColorBrush(Utils.ColorUtils.HslToRgb(270, 1, 0.7)),
-                new SolidColorBrush(Utils.ColorUtils.HslToRgb(10, 1, 0.3)),
+                new SolidColorBrush(new Hsl(270, 1, 0.7).ToColor()),
+                new SolidColorBrush(new Hsl(10, 1, 0.3).ToColor()),
             };
             ActiveStoryboard = new Storyboard();
         }

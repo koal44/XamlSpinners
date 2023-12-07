@@ -175,9 +175,7 @@ namespace XamlSpinners.Demo
                     var brushesCollection = (ObservableCollection<Brush>)spinner.GetValue(_dependencyProperty);
                     var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
 
-                    int comboBoxCount = 2;
-
-                    for (int i = 0; i < comboBoxCount; i++)
+                    for (int i = 0; i < brushesCollection.Count; i++)
                     {
                         var comboBox = new ComboBox
                         {

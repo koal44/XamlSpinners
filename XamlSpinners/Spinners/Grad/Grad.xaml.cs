@@ -12,6 +12,46 @@ namespace XamlSpinners
 
         readonly GradientStop _blueGradientStop;
         readonly GradientStop _redGradientStop;
+        readonly GradientStop _whiteGradientStop;
+        readonly GradientStop _blackGradientStop;
+
+        public double BlackOffset
+        {
+            get => (double)GetValue(BlackOffsetProperty);
+            set => SetValue(BlackOffsetProperty, value);
+        }
+
+        public static readonly DependencyProperty BlackOffsetProperty = DependencyProperty.Register(nameof(BlackOffset), typeof(double), typeof(Grad), new FrameworkPropertyMetadata(0.0, OnBlackOffsetChanged));
+
+        private static void OnBlackOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not Grad self) return;
+            self.OnBlackOffsetChanged(e);
+        }
+
+        protected virtual void OnBlackOffsetChanged(DependencyPropertyChangedEventArgs e)
+        {
+            _blackGradientStop.Offset = BlackOffset;
+        }
+
+        public double WhiteOffset
+        {
+            get => (double)GetValue(WhiteOffsetProperty);
+            set => SetValue(WhiteOffsetProperty, value);
+        }
+
+        public static readonly DependencyProperty WhiteOffsetProperty = DependencyProperty.Register(nameof(WhiteOffset), typeof(double), typeof(Grad), new FrameworkPropertyMetadata(1.0, OnWhiteOffsetChanged));
+
+        private static void OnWhiteOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not Grad self) return;
+            self.OnWhiteOffsetChanged(e);
+        }
+
+        protected virtual void OnWhiteOffsetChanged(DependencyPropertyChangedEventArgs e)
+        {
+            _whiteGradientStop.Offset = WhiteOffset;
+        }
 
 
         public double BlueOffset
@@ -241,6 +281,8 @@ namespace XamlSpinners
         {
             _blueGradientStop = new GradientStop(Colors.Blue, BlueOffset);
             _redGradientStop = new GradientStop(Colors.Red, RedOffset);
+            _whiteGradientStop = new GradientStop(Colors.White, WhiteOffset);
+            _blackGradientStop = new GradientStop(Colors.Black, BlackOffset);
 
             _radialGradientBrush = new RadialGradientBrush()
             {
@@ -249,14 +291,14 @@ namespace XamlSpinners
                 GradientOrigin = new Point(0.5, 0.5),
                 RadiusX = RadiusX,
                 RadiusY = RadiusY,
-                GradientStops = { _blueGradientStop, _redGradientStop}
+                GradientStops = { _blueGradientStop, _redGradientStop, _whiteGradientStop, _blackGradientStop}
             };
 
             _linearGradientBrush = new LinearGradientBrush()
             {
                 StartPoint = StartPoint,
                 EndPoint = EndPoint,
-                GradientStops = { _blueGradientStop, _redGradientStop}
+                GradientStops = { _blueGradientStop, _redGradientStop, _whiteGradientStop, _blackGradientStop}
             };
             DataContext = this;
             InitializeComponent();

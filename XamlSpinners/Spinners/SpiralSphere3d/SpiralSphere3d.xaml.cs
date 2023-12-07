@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ColorCraft;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -74,8 +75,8 @@ namespace XamlSpinners
         {
             Palette = new ObservableCollection<Brush>()
             {
-                new SolidColorBrush(ColorUtils.HslToRgb(180, 1, 0.4)),
-                new SolidColorBrush(ColorUtils.HslToRgb(270, 1, 0.8)),
+                new SolidColorBrush(new Hsl(180, 1, 0.4).ToColor()),
+                new SolidColorBrush(new Hsl(270, 1, 0.8).ToColor()),
             };
 
             DataContext = this;
@@ -156,17 +157,17 @@ namespace XamlSpinners
             var altColor = Colors.Red;
             if (Palette.Count < 1 || Palette[0] is not SolidColorBrush b1) { b1 = new SolidColorBrush(altColor); }
             if (Palette.Count < 2 || Palette[1] is not SolidColorBrush b2) { b2 = b1; }
-            var (fromHue, fromSat, fromLight) = ColorUtils.RgbToHsl(b1.Color);
-            var (toHue, toSat, toLight) = ColorUtils.RgbToHsl(b2.Color);
+            var fromHsl = Hsl.FromColor(b1.Color);
+            var toHsl = Hsl.FromColor(b2.Color);
 
             _sphereBlocksGroup.Children.Clear();
 
             for (int i = 0; i < blockPositions.Count; i++)
             {
-                var interpolatedColor = ColorUtils.InterpolateHsl(fromHue, toHue, fromSat, toSat, fromLight, toLight, (i / (double)blockPositions.Count));
+                var color = Hsl.Lerp(fromHsl, toHsl, (i / (double)blockPositions.Count)).ToColor();
 
-                //var blockMaterial = new DiffuseMaterial(new SolidColorBrush(interpolatedColor));
-                var blockMaterial = new EmissiveMaterial(new SolidColorBrush(interpolatedColor));
+                //var blockMaterial = new DiffuseMaterial(new SolidColorBrush(color));
+                var blockMaterial = new EmissiveMaterial(new SolidColorBrush(color));
 
                 var blockModel = new GeometryModel3D()
                 {

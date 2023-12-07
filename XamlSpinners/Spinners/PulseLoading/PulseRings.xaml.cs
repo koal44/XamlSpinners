@@ -14,13 +14,33 @@ namespace XamlSpinners
 {
     public partial class PulseRings : Spinner
     {
+
+        public PenLineCap DashCap
+        {
+            get => (PenLineCap)GetValue(DashCapProperty);
+            set => SetValue(DashCapProperty, value);
+        }
+
+        public static readonly DependencyProperty DashCapProperty = DependencyProperty.Register(nameof(DashCap), typeof(PenLineCap), typeof(PulseRings), new FrameworkPropertyMetadata(default(PenLineCap), OnDashCapChanged));
+
+        private static void OnDashCapChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not PulseRings self) return;
+            self.OnDashCapChanged(e);
+        }
+
+        protected virtual void OnDashCapChanged(DependencyPropertyChangedEventArgs e) { }
+
+
+
+
         public double RingThickness
         {
             get => (double)GetValue(RingThicknessProperty);
             set => SetValue(RingThicknessProperty, value);
         }
 
-        public static readonly DependencyProperty RingThicknessProperty = DependencyProperty.Register(nameof(RingThickness), typeof(double), typeof(PulseRings), new FrameworkPropertyMetadata(0.01, OnRingThicknessChanged));
+        public static readonly DependencyProperty RingThicknessProperty = DependencyProperty.Register(nameof(RingThickness), typeof(double), typeof(PulseRings), new FrameworkPropertyMetadata(0.01, FrameworkPropertyMetadataOptions.AffectsRender, OnRingThicknessChanged));
 
         private static void OnRingThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -34,7 +54,7 @@ namespace XamlSpinners
             set => SetValue(RingGapProperty, value);
         }
 
-        public static readonly DependencyProperty RingGapProperty = DependencyProperty.Register(nameof(RingGap), typeof(double), typeof(PulseRings), new FrameworkPropertyMetadata(0.15, OnRingGapChanged));
+        public static readonly DependencyProperty RingGapProperty = DependencyProperty.Register(nameof(RingGap), typeof(double), typeof(PulseRings), new FrameworkPropertyMetadata(0.15, FrameworkPropertyMetadataOptions.AffectsRender, OnRingGapChanged));
 
         private static void OnRingGapChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -52,6 +72,7 @@ namespace XamlSpinners
         {
             DataContext = this;
             InitializeComponent();
+            Palette = new() { Brushes.White, Brushes.White, Brushes.White };
         }
 
         protected override Size ArrangeOverride(Size finalSize)

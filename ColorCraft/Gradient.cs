@@ -10,10 +10,54 @@ namespace ColorCraft
 {
     public class Gradient : INotifyPropertyChanged
     {
+        #region Data
+
         private readonly bool _useGammaCorrection;
         private readonly List<MultiColorSpaceGradientStop> _stops;
         private WriteableBitmap? _bitmap;
         private ImageBrush? _brush;
+
+        #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        #endregion
+
+        #region Properties
+
+        public WriteableBitmap? Bitmap
+        {
+            get => _bitmap;
+            set
+            {
+                if (_bitmap != value)
+                {
+                    _bitmap = value;
+                    OnPropertyChanged(nameof(Bitmap));
+                }
+            }
+        }
+
+        public ImageBrush? Brush
+        {
+            get => _brush;
+            set
+            {
+                if (_brush != value)
+                {
+                    _brush = value;
+                    OnPropertyChanged(nameof(Brush));
+                }
+            }
+        }
+
+        public LerpMode LerpMode { get; set; }
+
+        #endregion
+
+        #region Constructors
 
         public Gradient(LerpMode mode, List<MultiColorSpaceGradientStop> stops, bool useGammaCorrection)
         {
@@ -31,27 +75,9 @@ namespace ColorCraft
             _useGammaCorrection = useGammaCorrection;
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        #endregion
 
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public WriteableBitmap? Bitmap
-        {
-            get => _bitmap;
-            set
-            {
-                if (_bitmap != value)
-                {
-                    _bitmap = value;
-                    OnPropertyChanged(nameof(Bitmap));
-                }
-            }
-        }
-
-        public LerpMode LerpMode { get; set; }
+        #region Methods
 
         public Color ColorAt(double progress)
         {
@@ -99,6 +125,13 @@ namespace ColorCraft
         public void CreateBitmap(int imgWidth, int imgHeight)
         {
             Bitmap = new WriteableBitmap(imgWidth, imgHeight, 96, 96, PixelFormats.Pbgra32, null);
+        }
+
+        public void CreateBrush()
+        {
+            if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
+
+            Brush = new ImageBrush(_bitmap);
         }
 
         public void DrawLinearGradient(Point startPoint, Point endPoint)
@@ -183,6 +216,13 @@ namespace ColorCraft
             _bitmap.WritePixels(sourceRect, pixelsBgra, stride, 0, 0);
             _bitmap.Unlock();
         }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
 
     }
 }

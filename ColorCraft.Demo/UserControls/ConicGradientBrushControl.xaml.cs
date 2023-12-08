@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace ColorCraft.Demo
 {
-    public partial class ConicGradientControl : UserControl
+    public partial class ConicGradientBrushControl : UserControl
     {
         public List<GradientPreset> Presets { get; set; }
 
@@ -16,11 +16,11 @@ namespace ColorCraft.Demo
             set => SetValue(GradientProperty, value);
         }
 
-        public static readonly DependencyProperty GradientProperty = DependencyProperty.Register(nameof(Gradient), typeof(Gradient), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(Gradient), OnGradientChanged));
+        public static readonly DependencyProperty GradientProperty = DependencyProperty.Register(nameof(Gradient), typeof(Gradient), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(default(Gradient), OnGradientChanged));
 
         private static void OnGradientChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not ConicGradientControl self) return;
+            if (d is not ConicGradientBrushControl self) return;
             self.OnGradientChanged(e);
         }
 
@@ -35,11 +35,11 @@ namespace ColorCraft.Demo
             set => SetValue(ModeProperty, value);
         }
 
-        public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(nameof(Mode), typeof(LerpMode), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(LerpMode), OnModeChanged));
+        public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(nameof(Mode), typeof(LerpMode), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(default(LerpMode), OnModeChanged));
 
         private static void OnModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not ConicGradientControl self) return;
+            if (d is not ConicGradientBrushControl self) return;
             self.OnModeChanged(e);
         }
 
@@ -55,11 +55,11 @@ namespace ColorCraft.Demo
             set => SetValue(AngleOffsetProperty, value);
         }
 
-        public static readonly DependencyProperty AngleOffsetProperty = DependencyProperty.Register(nameof(AngleOffset), typeof(double), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(double), OnAngleOffsetChanged));
+        public static readonly DependencyProperty AngleOffsetProperty = DependencyProperty.Register(nameof(AngleOffset), typeof(double), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(default(double), OnAngleOffsetChanged));
 
         private static void OnAngleOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not ConicGradientControl self) return;
+            if (d is not ConicGradientBrushControl self) return;
             self.OnAngleOffsetChanged(e);
         }
 
@@ -74,11 +74,11 @@ namespace ColorCraft.Demo
             set => SetValue(SpiralStrengthProperty, value);
         }
 
-        public static readonly DependencyProperty SpiralStrengthProperty = DependencyProperty.Register(nameof(SpiralStrength), typeof(double), typeof(ConicGradientControl), new FrameworkPropertyMetadata(0.0, OnSpiralStrengthChanged));
+        public static readonly DependencyProperty SpiralStrengthProperty = DependencyProperty.Register(nameof(SpiralStrength), typeof(double), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(0.0, OnSpiralStrengthChanged));
 
         private static void OnSpiralStrengthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not ConicGradientControl self) return;
+            if (d is not ConicGradientBrushControl self) return;
             self.OnSpiralStrengthChanged(e);
         }
 
@@ -93,11 +93,11 @@ namespace ColorCraft.Demo
             set => SetValue(KaleidoscopeCountProperty, value);
         }
 
-        public static readonly DependencyProperty KaleidoscopeCountProperty = DependencyProperty.Register(nameof(KaleidoscopeCount), typeof(int), typeof(ConicGradientControl), new FrameworkPropertyMetadata(1, OnKaleidoscopeCountChanged));
+        public static readonly DependencyProperty KaleidoscopeCountProperty = DependencyProperty.Register(nameof(KaleidoscopeCount), typeof(int), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(1, OnKaleidoscopeCountChanged));
 
         private static void OnKaleidoscopeCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not ConicGradientControl self) return;
+            if (d is not ConicGradientBrushControl self) return;
             self.OnKaleidoscopeCountChanged(e);
         }
 
@@ -112,11 +112,11 @@ namespace ColorCraft.Demo
             set => SetValue(SelectedGradientStopPresetIndexProperty, value);
         }
 
-        public static readonly DependencyProperty SelectedGradientStopPresetIndexProperty = DependencyProperty.Register(nameof(SelectedGradientStopPresetIndex), typeof(int), typeof(ConicGradientControl), new FrameworkPropertyMetadata(-1, OnSelectedGradientStopPresetIndexChanged));
+        public static readonly DependencyProperty SelectedGradientStopPresetIndexProperty = DependencyProperty.Register(nameof(SelectedGradientStopPresetIndex), typeof(int), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(-1, OnSelectedGradientStopPresetIndexChanged));
 
         private static void OnSelectedGradientStopPresetIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not ConicGradientControl self) return;
+            if (d is not ConicGradientBrushControl self) return;
             self.OnSelectedGradientStopPresetIndexChanged(e);
         }
 
@@ -129,9 +129,10 @@ namespace ColorCraft.Demo
             int height = 300;
             Gradient.CreateBitmap(width, height);
             UpdateGradient();
+            Gradient.CreateBrush();
         }
 
-        public ConicGradientControl()
+        public ConicGradientBrushControl()
         {
             Presets = new List<GradientPreset>()
             {
@@ -183,6 +184,23 @@ namespace ColorCraft.Demo
             SelectedGradientStopPresetIndex = 0;
 
             //GradientStopsPresetsComboBox.ItemsSource = Presets.Select(p => p.Name);
+        }
+
+        private void InitGradient()
+        {
+            int width = 300;
+            int height = 300;
+
+            var stops = new List<GradientStop>
+            {
+                new GradientStop(Colors.Red, 0.0),
+                new GradientStop(Colors.Yellow, 0.33),
+                new GradientStop(Colors.Blue, 0.67),
+                new GradientStop(Colors.Red, 1.0) // return to first color for a smooth transition
+            };
+
+            Gradient = new Gradient(Mode, stops, true);
+            Gradient.CreateBitmap(width, height);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

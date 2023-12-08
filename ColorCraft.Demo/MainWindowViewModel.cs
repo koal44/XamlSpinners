@@ -9,13 +9,14 @@ namespace ColorCraft.Demo
     {
         public MainWindowViewModel()
         {
-            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Linear Gradient");
+            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Conic Brush");
         }
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()
         {
             ("Linear Gradient", new LinearGradientControl()),
-            ("Conic Gradient", new ConicGradientControl())
+            ("Conic Gradient", new ConicGradientControl()),
+            ("Conic Brush", new ConicGradientBrushControl())
         };
 
         public IEnumerable<string> UserControlNames => UserControlsList.Select(x => x.name);

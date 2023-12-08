@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="UserControls\ConicGradientBrushControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserControls\ConicGradientControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

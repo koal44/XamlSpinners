@@ -1,14 +1,14 @@
-﻿<UserControl x:Class="ColorCraft.Demo.ConicGradientControl"
+﻿<UserControl x:Class="ColorCraft.Demo.SpiralGradientControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ColorCraft.Demo"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:Background="White"
-             d:DataContext="{d:DesignInstance local:ConicGradientControl,
+             d:DataContext="{d:DesignInstance local:SpiralGradientControl,
                                               IsDesignTimeCreatable=True}"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
+             d:DesignHeight="400"
+             d:DesignWidth="700"
              d:Foreground="Black"
              mc:Ignorable="d">
   <Grid>
@@ -30,6 +30,8 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="10" />
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="10" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
@@ -37,6 +39,7 @@
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <TextBlock Grid.Row="0"
+                 VerticalAlignment="Center"
                  Grid.Column="0"
                  Margin="0,0,10,0"
                  Text="Mode:" />
@@ -63,7 +66,24 @@
                  Width="50"
                  Margin="5,0,0,0"
                  Text="{Binding ElementName=AngleSlider, Path=Value}" />
+      <TextBlock Grid.Row="4"
+                 Grid.Column="0"
+                 Margin="0,0,10,0"
+                 Text="Turn:" />
+      <Slider x:Name="TurnSlider"
+              Grid.Row="4"
+              Grid.Column="1"
+              Width="100"
+              Maximum="50"
+              Minimum="0"
+              Value="{Binding TurnIntensity, Delay=10}" />
+      <TextBlock Grid.Row="4"
+                 Grid.Column="2"
+                 Width="50"
+                 Margin="5,0,0,0"
+                 Text="{Binding ElementName=TurnSlider, Path=Value, StringFormat={}{0:F1}}" />
     </Grid>
 
   </Grid>
+
 </UserControl>

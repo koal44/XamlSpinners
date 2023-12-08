@@ -91,7 +91,7 @@ namespace ColorCraft
         /// Converts RGB to HSL color format.
         /// </summary>
         /// <param name="color">RGB color.</param>
-        /// <returns>HSL, hue ∈ [0°, 360°), saturation ∈ [0, 1], lightness ∈ [0, 1].</returns>
+        /// <returns>HSL, hue [0, 360), saturation [0, 1], lightness [0, 1].</returns>
         public static Hsl FromColor(Color color)
         {
             var c = RgbLinear.FromColor(color, false); // false??

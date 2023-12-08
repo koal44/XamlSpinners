@@ -32,7 +32,6 @@ namespace XamlSpinners.Demo
                 },
             };
 
-
             // spinner name
             var spinnerNameLabel = new TextBlock
             {

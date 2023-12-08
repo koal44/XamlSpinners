@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace ColorCraft.Demo
@@ -12,13 +9,15 @@ namespace ColorCraft.Demo
     {
         public MainWindowViewModel()
         {
-            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Conic Gradient");
+            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Linear Gradient");
         }
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()
         {
+            ("Spiral Gradient", new SpiralGradientControl()),
             ("Conic Gradient", new ConicGradientControl()),
             ("Linear Gradient", new LinearGradientControl()),
+            ("Ray Gradient", new RayGradientControl())
         };
 
         public IEnumerable<string> UserControlNames => UserControlsList.Select(x => x.name);

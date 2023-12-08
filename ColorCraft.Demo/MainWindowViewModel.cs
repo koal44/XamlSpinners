@@ -14,10 +14,8 @@ namespace ColorCraft.Demo
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()
         {
-            ("Spiral Gradient", new SpiralGradientControl()),
-            ("Conic Gradient", new ConicGradientControl()),
             ("Linear Gradient", new LinearGradientControl()),
-            ("Ray Gradient", new RayGradientControl())
+            ("Conic Gradient", new ConicGradientControl())
         };
 
         public IEnumerable<string> UserControlNames => UserControlsList.Select(x => x.name);

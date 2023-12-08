@@ -16,12 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UserControls\RayGradientControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="UserControls\SpiralGradientControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="UserControls\ConicGradientControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

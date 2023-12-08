@@ -23,6 +23,12 @@ namespace ColorCraft
 
         public Lab Lab => _lab ??= Lab.FromColor(_color, _useGammaCorrection);
 
+        public MultiColorSpaceGradientStop(Color color, double offset, bool useGammaCorrection)
+        {
+            _color = color;
+            _offset = offset;
+            _useGammaCorrection = useGammaCorrection;
+        }
 
         public MultiColorSpaceGradientStop(GradientStop stop, bool useGammaCorrection)
         {

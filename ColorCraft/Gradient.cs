@@ -168,7 +168,7 @@ namespace ColorCraft
             _bitmap.Unlock();
         }
 
-        public void DrawConicGradient(float angleOffset, float spiralStrength, float kaleidoscopeCount, float kaleidoscopeRayOffset)
+        public void DrawConicGradient(float angleOffset, float spiralStrength, float kaleidoscopeCount)
         {
             //kaleidoscopeCount = 3.5;
             if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
@@ -185,14 +185,15 @@ namespace ColorCraft
             // Normalize the angleOffsets
             angleOffset %= TwoPi;
             angleOffset += angleOffset < 0 ? TwoPi : 0; // angleOffset is now in [0, 2pi)
-            kaleidoscopeRayOffset %= TwoPi;
-            kaleidoscopeRayOffset += kaleidoscopeRayOffset < 0 ? TwoPi : 0;
 
             float modulusAngle = TwoPi / kaleidoscopeCount;
 
+            // fix the discontinuity ray at the kaleidoscope boundary to be the same as the angleOffset
+            float kaleidoscopeRayOffset = angleOffset;
+
             bool shouldOffsetKaleidoscopeDiscontinuityRay =
-                kaleidoscopeRayOffset != 0 &&
-                kaleidoscopeCount != (int)kaleidoscopeRayOffset;
+                kaleidoscopeCount != (int)kaleidoscopeCount &&
+                kaleidoscopeRayOffset != 0;
 
             int i = 0;
             float dy = centerY;
@@ -206,7 +207,7 @@ namespace ColorCraft
                     {
                         float dxRot = dx * MathF.Cos(kaleidoscopeRayOffset) - dy * MathF.Sin(kaleidoscopeRayOffset);
                         float dyRot = dx * MathF.Sin(kaleidoscopeRayOffset) + dy * MathF.Cos(kaleidoscopeRayOffset);
-                        angle = MathF.Atan2(dyRot, dxRot) + MathF.PI + angleOffset - kaleidoscopeRayOffset;
+                        angle = MathF.Atan2(dyRot, dxRot) + MathF.PI + 0; // angleOffset - kaleidoscopeRayOffset == 0;
                     }
                     else
                     {

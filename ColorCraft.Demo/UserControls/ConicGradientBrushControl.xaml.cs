@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace ColorCraft.Demo
 {
@@ -106,25 +105,6 @@ namespace ColorCraft.Demo
             UpdateGradient();
         }
 
-        public float KaleidoscopeRayOffset
-        {
-            get => (float)GetValue(KaleidoscopeRayOffsetProperty);
-            set => SetValue(KaleidoscopeRayOffsetProperty, value);
-        }
-
-        public static readonly DependencyProperty KaleidoscopeRayOffsetProperty = DependencyProperty.Register(nameof(KaleidoscopeRayOffset), typeof(float), typeof(ConicGradientBrushControl), new FrameworkPropertyMetadata(default(float), OnKaleidoscopeRayOffsetChanged));
-
-        private static void OnKaleidoscopeRayOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not ConicGradientBrushControl self) return;
-            self.OnKaleidoscopeRayOffsetChanged(e);
-        }
-
-        protected virtual void OnKaleidoscopeRayOffsetChanged(DependencyPropertyChangedEventArgs e)
-        {
-            UpdateGradient();
-        }
-
         public int SelectedGradientStopPresetIndex
         {
             get => (int)GetValue(SelectedGradientStopPresetIndexProperty);
@@ -173,8 +153,7 @@ namespace ColorCraft.Demo
             if (Gradient.Bitmap == null) return;
 
             var startOffset = AngleOffset * MathF.PI / 180;
-            var rayOffset = KaleidoscopeRayOffset * MathF.PI / 180;
-            Gradient.DrawConicGradient(startOffset, SpiralStrength, KaleidoscopeCount, rayOffset);
+            Gradient.DrawConicGradient(startOffset, SpiralStrength, KaleidoscopeCount);
         }
     }
 }

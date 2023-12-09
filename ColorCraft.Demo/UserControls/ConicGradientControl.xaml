@@ -7,7 +7,7 @@
              d:Background="White"
              d:DataContext="{d:DesignInstance local:ConicGradientControl,
                                               IsDesignTimeCreatable=True}"
-             d:DesignHeight="400"
+             d:DesignHeight="350"
              d:DesignWidth="700"
              d:Foreground="Black"
              mc:Ignorable="d">
@@ -27,8 +27,6 @@
            Source="{Binding Gradient.Bitmap}" />
     <Grid Grid.Column="1">
       <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="10" />
         <RowDefinition Height="Auto" />
         <RowDefinition Height="10" />
         <RowDefinition Height="Auto" />
@@ -93,38 +91,22 @@
       <Slider x:Name="KaleidoscopeSlider"
               Grid.Row="6"
               Grid.Column="1"
+              IsSnapToTickEnabled="True"
               Maximum="5"
-              TickFrequency="1"
+              TickFrequency="0.1"
               Value="{Binding KaleidoscopeCount, Delay=10}" />
       <TextBlock Grid.Row="6"
                  Grid.Column="2"
                  Width="50"
                  Margin="5,0,0,0"
-                 Text="{Binding ElementName=KaleidoscopeSlider, Path=Value}" />
+                 Text="{Binding ElementName=KaleidoscopeSlider, Path=Value, StringFormat={}{0:F1}}" />
       <TextBlock Grid.Row="8"
-                 Grid.Column="0"
-                 Margin="0,0,10,0"
-                 Text="KaleidoscopeRay:" />
-      <Slider x:Name="KaleidoscopeRaySlider"
-              Grid.Row="8"
-              Grid.Column="1"
-              IsSnapToTickEnabled="True"
-              Maximum="360"
-              Minimum="0"
-              TickFrequency="1"
-              Value="{Binding KaleidoscopeRayOffset, Delay=10}" />
-      <TextBlock Grid.Row="8"
-                 Grid.Column="2"
-                 Width="50"
-                 Margin="5,0,0,0"
-                 Text="{Binding ElementName=KaleidoscopeRaySlider, Path=Value}" />
-      <TextBlock Grid.Row="10"
                  Grid.Column="0"
                  Margin="0,0,10,0"
                  VerticalAlignment="Center"
                  Text="StopsPresets:" />
       <ComboBox Name="GradientStopsPresetsComboBox"
-                Grid.Row="10"
+                Grid.Row="8"
                 Grid.Column="1"
                 DisplayMemberPath="Name"
                 ItemsSource="{Binding Presets}"

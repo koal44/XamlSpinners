@@ -122,29 +122,23 @@ namespace ColorCraft.Demo
         protected virtual void OnSelectedGradientStopPresetIndexChanged(DependencyPropertyChangedEventArgs e)
         {
             var stops = Presets[SelectedGradientStopPresetIndex].Stops;
-            Gradient = new Gradient(Mode, stops, true);
+            Gradient = new Gradient(stops, Mode);
 
-            int width = 300;
-            int height = 300;
-            Gradient.CreateBitmap(width, height);
+            //int width = 300;
+            //int height = 300;
+            //Gradient.CreateBitmap(width, height);
+            Gradient.InitBitmap();
             UpdateGradient();
         }
 
         public ConicGradientControl()
         {
-            Presets = GradientPreset.GetDefaultPresets();
-
             DataContext = this;
-            UpdateGradient();
+            Presets = GradientPreset.GetDefaultPresets();
             InitializeComponent();
-            Loaded += OnLoaded;
             SelectedGradientStopPresetIndex = 0;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
             LerpSelectionComboBox.ItemsSource = Enum.GetValues(typeof(LerpMode));
-            LerpSelectionComboBox.SelectedIndex = 0; // Selects the first mode by default
+            LerpSelectionComboBox.SelectedIndex = 0;
         }
 
         private void UpdateGradient()

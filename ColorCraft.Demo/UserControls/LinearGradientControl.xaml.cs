@@ -56,11 +56,10 @@ namespace ColorCraft.Demo
                     new GradientStop(startColorString, 0),
                     new GradientStop(endColorString, 1)
                 };
-                //var bitmap = LinearGradient.CreateBitmap(_imgWidth, _imgHeight, gradStops, mode);
-                var gradient = new Gradient(mode, gradStops, true);
+                var gradient = new Gradient(gradStops, mode);
                 var startPoint = new Point(0, 0);
                 var endPoint = new Point(_imgWidth, 0);
-                gradient.CreateBitmap(_imgWidth, _imgHeight);
+                gradient.InitBitmap(_imgWidth, _imgHeight);
                 gradient.DrawLinearGradient(startPoint, endPoint);
                 var bitmap = gradient.Bitmap;
                 var image = new Image

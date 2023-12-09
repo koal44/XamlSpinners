@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -60,14 +59,7 @@ namespace ColorCraft
 
         #region Constructors
 
-        public Gradient(LerpMode mode, List<MultiColorSpaceGradientStop> stops, bool useGammaCorrection)
-        {
-            LerpMode = mode;
-            _stops = stops.OrderBy(s => s.Offset).ToList();
-            _useGammaCorrection = useGammaCorrection;
-        }
-
-        public Gradient(LerpMode mode, List<GradientStop> stops, bool useGammaCorrection)
+        public Gradient(List<GradientStop> stops, LerpMode mode = LerpMode.Rgb, bool useGammaCorrection = true)
         {
             LerpMode = mode;
             _stops = stops.OrderBy(s => s.Offset)
@@ -123,16 +115,9 @@ namespace ColorCraft
             return lerpedColor;
         }
 
-        public void CreateBitmap(int imgWidth, int imgHeight)
+        public void InitBitmap(int imgWidth = 200, int imgHeight = 200)
         {
             Bitmap = new WriteableBitmap(imgWidth, imgHeight, 96, 96, PixelFormats.Pbgra32, null);
-        }
-
-        public void CreateBrush()
-        {
-            if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
-
-            Brush = new ImageBrush(_bitmap);
         }
 
         public void DrawLinearGradient(Point startPoint, Point endPoint)
@@ -166,11 +151,11 @@ namespace ColorCraft
             int stride = _bitmap.PixelWidth * (_bitmap.Format.BitsPerPixel / 8);
             _bitmap.WritePixels(sourceRect, pixelsBgra, stride, 0, 0);
             _bitmap.Unlock();
+            Brush = new ImageBrush(_bitmap);
         }
 
         public void DrawConicGradient(float angleOffset, float spiralStrength, float kaleidoscopeCount)
         {
-            //kaleidoscopeCount = 3.5;
             if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
             _bitmap.Lock();
 
@@ -188,7 +173,7 @@ namespace ColorCraft
 
             float modulusAngle = TwoPi / kaleidoscopeCount;
 
-            // fix the discontinuity ray at the kaleidoscope boundary to be the same as the angleOffset
+            // fix the discontinuity ray for non-integral kaleidoscopeCounts to be the same as the angleOffset
             float kaleidoscopeRayOffset = angleOffset;
 
             bool shouldOffsetKaleidoscopeDiscontinuityRay =
@@ -203,8 +188,12 @@ namespace ColorCraft
                 float dx = -centerX;
                 for (int x = 0; x < _bitmap.PixelWidth; ++x, ++dx)
                 {
+                    // Calculate angle for the current pixel
                     if (shouldOffsetKaleidoscopeDiscontinuityRay)
                     {
+                        // Atan2 has an inherent discontinuity at the negative x-axis, which becomes apparent when
+                        // using a non integral kaleidoscope count. We can choose where the discontinuity
+                        // ray is by rotating before calculating atan2.
                         float dxRot = dx * MathF.Cos(kaleidoscopeRayOffset) - dy * MathF.Sin(kaleidoscopeRayOffset);
                         float dyRot = dx * MathF.Sin(kaleidoscopeRayOffset) + dy * MathF.Cos(kaleidoscopeRayOffset);
                         angle = MathF.Atan2(dyRot, dxRot) + MathF.PI + 0; // angleOffset - kaleidoscopeRayOffset == 0;
@@ -214,7 +203,6 @@ namespace ColorCraft
                         angle = MathF.Atan2(dy, dx) + MathF.PI + angleOffset; // angle is now in [0, 4pi)
                     }
 
-                    // Calculate angle for the current pixel
                     if (spiralStrength != 0)
                     {
                         float radialProgress = MathF.Sqrt((dy * dy + dx * dx) / maxRadiusSquared);
@@ -224,13 +212,6 @@ namespace ColorCraft
                     angle = angle < 0 ? angle + modulusAngle : angle; // angle is now in [0, modulusAngle)
                     float progress = angle / modulusAngle; // progress is [0, 1)
 
-                    if (_bitmap.PixelWidth == 300 && _bitmap.PixelWidth == 300)
-                    {
-                        if (x == 0 && (y > 145 && y < 155))
-                        {
-                            //Debug.WriteLine($"x: {x}, y: {y}, angle: {angle}, progress: {progress}");
-                        }
-                    }
                     var color = ColorAt(progress);
 
                     int bgra = (color.B << 0) | (color.G << 8) | (color.R << 16) | (color.A << 24);
@@ -242,6 +223,7 @@ namespace ColorCraft
             int stride = _bitmap.PixelWidth * (_bitmap.Format.BitsPerPixel / 8);
             _bitmap.WritePixels(sourceRect, pixelsBgra, stride, 0, 0);
             _bitmap.Unlock();
+            Brush = new ImageBrush(_bitmap);
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ColorCraft\ColorCraft.csproj" />
+    <ProjectReference Include="..\Shapes\Shapes.csproj" />
   </ItemGroup>
 
   <ItemGroup>

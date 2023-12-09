@@ -36,6 +36,8 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="10" />
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="10" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
@@ -49,8 +51,8 @@
                  Text="Mode:" />
       <ComboBox Name="LerpSelectionComboBox"
                 Grid.Row="0"
-                Width="120"
                 Grid.Column="1"
+                Width="120"
                 SelectedItem="{Binding Mode}" />
       <TextBlock Grid.Row="2"
                  Grid.Column="0"
@@ -91,9 +93,7 @@
       <Slider x:Name="KaleidoscopeSlider"
               Grid.Row="6"
               Grid.Column="1"
-              IsSnapToTickEnabled="True"
               Maximum="5"
-              Minimum="1"
               TickFrequency="1"
               Value="{Binding KaleidoscopeCount, Delay=10}" />
       <TextBlock Grid.Row="6"
@@ -101,19 +101,34 @@
                  Width="50"
                  Margin="5,0,0,0"
                  Text="{Binding ElementName=KaleidoscopeSlider, Path=Value}" />
-
       <TextBlock Grid.Row="8"
+                 Grid.Column="0"
+                 Margin="0,0,10,0"
+                 Text="KaleidoscopeRay:" />
+      <Slider x:Name="KaleidoscopeRaySlider"
+              Grid.Row="8"
+              Grid.Column="1"
+              IsSnapToTickEnabled="True"
+              Maximum="360"
+              Minimum="0"
+              TickFrequency="1"
+              Value="{Binding KaleidoscopeRayOffset, Delay=10}" />
+      <TextBlock Grid.Row="8"
+                 Grid.Column="2"
+                 Width="50"
+                 Margin="5,0,0,0"
+                 Text="{Binding ElementName=KaleidoscopeRaySlider, Path=Value}" />
+      <TextBlock Grid.Row="10"
                  Grid.Column="0"
                  Margin="0,0,10,0"
                  VerticalAlignment="Center"
                  Text="StopsPresets:" />
       <ComboBox Name="GradientStopsPresetsComboBox"
-                Grid.Row="8"
+                Grid.Row="10"
                 Grid.Column="1"
                 DisplayMemberPath="Name"
                 ItemsSource="{Binding Presets}"
-                SelectedIndex="{Binding SelectedGradientStopPresetIndex}">
-      </ComboBox>
+                SelectedIndex="{Binding SelectedGradientStopPresetIndex}" />
 
     </Grid>
 

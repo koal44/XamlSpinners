@@ -49,13 +49,13 @@ namespace ColorCraft.Demo
             UpdateGradient();
         }
 
-        public double AngleOffset
+        public float AngleOffset
         {
-            get => (double)GetValue(AngleOffsetProperty);
+            get => (float)GetValue(AngleOffsetProperty);
             set => SetValue(AngleOffsetProperty, value);
         }
 
-        public static readonly DependencyProperty AngleOffsetProperty = DependencyProperty.Register(nameof(AngleOffset), typeof(double), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(double), OnAngleOffsetChanged));
+        public static readonly DependencyProperty AngleOffsetProperty = DependencyProperty.Register(nameof(AngleOffset), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(float), OnAngleOffsetChanged));
 
         private static void OnAngleOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -68,13 +68,13 @@ namespace ColorCraft.Demo
             UpdateGradient();
         }
 
-        public double SpiralStrength
+        public float SpiralStrength
         {
-            get => (double)GetValue(SpiralStrengthProperty);
+            get => (float)GetValue(SpiralStrengthProperty);
             set => SetValue(SpiralStrengthProperty, value);
         }
 
-        public static readonly DependencyProperty SpiralStrengthProperty = DependencyProperty.Register(nameof(SpiralStrength), typeof(double), typeof(ConicGradientControl), new FrameworkPropertyMetadata(0.0, OnSpiralStrengthChanged));
+        public static readonly DependencyProperty SpiralStrengthProperty = DependencyProperty.Register(nameof(SpiralStrength), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(0f, OnSpiralStrengthChanged));
 
         private static void OnSpiralStrengthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -87,13 +87,13 @@ namespace ColorCraft.Demo
             UpdateGradient();
         }
 
-        public int KaleidoscopeCount
+        public float KaleidoscopeCount
         {
-            get => (int)GetValue(KaleidoscopeCountProperty);
+            get => (float)GetValue(KaleidoscopeCountProperty);
             set => SetValue(KaleidoscopeCountProperty, value);
         }
 
-        public static readonly DependencyProperty KaleidoscopeCountProperty = DependencyProperty.Register(nameof(KaleidoscopeCount), typeof(int), typeof(ConicGradientControl), new FrameworkPropertyMetadata(1, OnKaleidoscopeCountChanged));
+        public static readonly DependencyProperty KaleidoscopeCountProperty = DependencyProperty.Register(nameof(KaleidoscopeCount), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(1f, OnKaleidoscopeCountChanged));
 
         private static void OnKaleidoscopeCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -105,6 +105,27 @@ namespace ColorCraft.Demo
         {
             UpdateGradient();
         }
+
+
+        public float KaleidoscopeRayOffset
+        {
+            get => (float)GetValue(KaleidoscopeRayOffsetProperty);
+            set => SetValue(KaleidoscopeRayOffsetProperty, value);
+        }
+
+        public static readonly DependencyProperty KaleidoscopeRayOffsetProperty = DependencyProperty.Register(nameof(KaleidoscopeRayOffset), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(float), OnKaleidoscopeRayOffsetChanged));
+
+        private static void OnKaleidoscopeRayOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not ConicGradientControl self) return;
+            self.OnKaleidoscopeRayOffsetChanged(e);
+        }
+
+        protected virtual void OnKaleidoscopeRayOffsetChanged(DependencyPropertyChangedEventArgs e)
+        {
+            UpdateGradient();
+        }
+
 
         public int SelectedGradientStopPresetIndex
         {
@@ -133,56 +154,13 @@ namespace ColorCraft.Demo
 
         public ConicGradientControl()
         {
-            Presets = new List<GradientPreset>()
-            {
-                new GradientPreset
-                ("Red Yellow Blue", new List<MultiColorSpaceGradientStop>() {
-                    new MultiColorSpaceGradientStop(Colors.Red, 0.0, true),
-                    new MultiColorSpaceGradientStop(Colors.Yellow, 0.5, true),
-                    new MultiColorSpaceGradientStop(Colors.Blue, 1.0, true)
-                }),
-                new GradientPreset
-                ("Rainbow", new List<MultiColorSpaceGradientStop>() {
-                    new MultiColorSpaceGradientStop(Colors.Red, 0.0, true),
-                    new MultiColorSpaceGradientStop(Colors.Orange, 0.10, true),
-                    new MultiColorSpaceGradientStop(Colors.Yellow, 0.28, true),
-                    new MultiColorSpaceGradientStop(Colors.Green, 0.42, true),
-                    new MultiColorSpaceGradientStop(Colors.Cyan, 0.56, true),
-                    new MultiColorSpaceGradientStop(Colors.Blue, 0.70, true),
-                    new MultiColorSpaceGradientStop(Colors.Violet, 0.9, true),
-                    new MultiColorSpaceGradientStop(Colors.Red, 1.0, true)  // Wrap back to Red
-                }),
-                new GradientPreset
-                ("Sunset Glow", new List<MultiColorSpaceGradientStop>() {
-                    new MultiColorSpaceGradientStop(Colors.DarkOrange, 0.0, true),
-                    new MultiColorSpaceGradientStop(Colors.Orange, 0.25, true),
-                    new MultiColorSpaceGradientStop(Colors.Pink, 0.5, true),
-                    new MultiColorSpaceGradientStop(Colors.Purple, 1.0, true)
-                }),
-                new GradientPreset
-                ("Ocean Breeze", new List<MultiColorSpaceGradientStop>() {
-                    new MultiColorSpaceGradientStop(Colors.LightBlue, 0.0, true),
-                    new MultiColorSpaceGradientStop(Colors.DarkBlue, 0.33, true),
-                    new MultiColorSpaceGradientStop(Colors.SeaGreen, 0.67, true),
-                    new MultiColorSpaceGradientStop(Colors.LightBlue, 1.0, true)
-                }),
-                new GradientPreset
-                ("Forest Walk", new List<MultiColorSpaceGradientStop>() {
-                    new MultiColorSpaceGradientStop(Colors.DarkGreen, 0.0, true),
-                    new MultiColorSpaceGradientStop(Colors.Brown, 0.4, true),
-                    new MultiColorSpaceGradientStop(Colors.Olive, 0.7, true),
-                    new MultiColorSpaceGradientStop(Colors.LightGreen, 1.0, true)
-                }),
-            };
+            Presets = GradientPreset.GetDefaultPresets();
 
             DataContext = this;
-            //InitGradient();
             UpdateGradient();
             InitializeComponent();
             Loaded += OnLoaded;
             SelectedGradientStopPresetIndex = 0;
-
-            //GradientStopsPresetsComboBox.ItemsSource = Presets.Select(p => p.Name);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -193,10 +171,12 @@ namespace ColorCraft.Demo
 
         private void UpdateGradient()
         {
-           if (Gradient == null) return;
-           if (Gradient.Bitmap == null) return;
+            if (Gradient == null) return;
+            if (Gradient.Bitmap == null) return;
 
-           Gradient.DrawConicGradient(AngleOffset * Math.PI / 180.0, SpiralStrength, KaleidoscopeCount);
+            var startOffset = AngleOffset * MathF.PI / 180;
+            var rayOffset = KaleidoscopeRayOffset * MathF.PI / 180;
+            Gradient.DrawConicGradient(startOffset, SpiralStrength, KaleidoscopeCount, rayOffset);
         }
     }
 }

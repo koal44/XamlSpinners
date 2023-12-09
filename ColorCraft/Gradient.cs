@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -167,43 +168,68 @@ namespace ColorCraft
             _bitmap.Unlock();
         }
 
-        public void DrawConicGradient(double angleOffset, double spiralStrength, int kaleidoscopeCount)
+        public void DrawConicGradient(float angleOffset, float spiralStrength, float kaleidoscopeCount, float kaleidoscopeRayOffset)
         {
+            //kaleidoscopeCount = 3.5;
             if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
             _bitmap.Lock();
 
-            const double TwoPi = 2.0 * Math.PI;
-            var maxRadiusSquared = _bitmap.PixelWidth * _bitmap.PixelWidth + _bitmap.PixelHeight * _bitmap.PixelHeight;
+            const float TwoPi = 2f * MathF.PI;
+            int maxRadiusSquared = _bitmap.PixelWidth * _bitmap.PixelWidth + _bitmap.PixelHeight * _bitmap.PixelHeight;
 
             int[] pixelsBgra = new int[_bitmap.PixelWidth * _bitmap.PixelHeight];
 
-            var centerX = _bitmap.PixelWidth / 2f;
-            var centerY = _bitmap.PixelHeight / 2f;
+            float centerX = _bitmap.PixelWidth / 2f;
+            float centerY = _bitmap.PixelHeight / 2f;
 
-            // Normalize the start angle
+            // Normalize the angleOffsets
             angleOffset %= TwoPi;
             angleOffset += angleOffset < 0 ? TwoPi : 0; // angleOffset is now in [0, 2pi)
+            kaleidoscopeRayOffset %= TwoPi;
+            kaleidoscopeRayOffset += kaleidoscopeRayOffset < 0 ? TwoPi : 0;
 
-            var modulusAngle = TwoPi / kaleidoscopeCount;
+            float modulusAngle = TwoPi / kaleidoscopeCount;
+
+            bool shouldOffsetKaleidoscopeDiscontinuityRay =
+                kaleidoscopeRayOffset != 0 &&
+                kaleidoscopeCount != (int)kaleidoscopeRayOffset;
 
             int i = 0;
-            var dy = centerY;
+            float dy = centerY;
+            float angle;
             for (int y = 0; y < _bitmap.PixelHeight; ++y, --dy)
             {
-                var dx = centerX;
-                for (int x = 0; x < _bitmap.PixelWidth; ++x, --dx)
+                float dx = -centerX;
+                for (int x = 0; x < _bitmap.PixelWidth; ++x, ++dx)
                 {
+                    if (shouldOffsetKaleidoscopeDiscontinuityRay)
+                    {
+                        float dxRot = dx * MathF.Cos(kaleidoscopeRayOffset) - dy * MathF.Sin(kaleidoscopeRayOffset);
+                        float dyRot = dx * MathF.Sin(kaleidoscopeRayOffset) + dy * MathF.Cos(kaleidoscopeRayOffset);
+                        angle = MathF.Atan2(dyRot, dxRot) + MathF.PI + angleOffset - kaleidoscopeRayOffset;
+                    }
+                    else
+                    {
+                        angle = MathF.Atan2(dy, dx) + MathF.PI + angleOffset; // angle is now in [0, 4pi)
+                    }
+
                     // Calculate angle for the current pixel
-                    var angle = Math.Atan2(dy, dx) + Math.PI + angleOffset; // angle is now in [0, 4pi)
                     if (spiralStrength != 0)
                     {
-                        var radialProgress = Math.Sqrt((dy * dy + dx * dx) / maxRadiusSquared);
+                        float radialProgress = MathF.Sqrt((dy * dy + dx * dx) / maxRadiusSquared);
                         angle += radialProgress * spiralStrength; // angle is now in (-inf, inf)
                     }
                     angle %= modulusAngle; // angle is now in (-modulusAngle, modulusAngle)
                     angle = angle < 0 ? angle + modulusAngle : angle; // angle is now in [0, modulusAngle)
-                    var progress = angle / modulusAngle; // progress is [0, 1)
+                    float progress = angle / modulusAngle; // progress is [0, 1)
 
+                    if (_bitmap.PixelWidth == 300 && _bitmap.PixelWidth == 300)
+                    {
+                        if (x == 0 && (y > 145 && y < 155))
+                        {
+                            //Debug.WriteLine($"x: {x}, y: {y}, angle: {angle}, progress: {progress}");
+                        }
+                    }
                     var color = ColorAt(progress);
 
                     int bgra = (color.B << 0) | (color.G << 8) | (color.R << 16) | (color.A << 24);

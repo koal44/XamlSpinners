@@ -38,7 +38,8 @@ D2dGradients::D2dGradients() :
     m_pDirect2dFactory(NULL),
     m_pRenderTarget(NULL),
     m_pLightSlateGrayBrush(NULL),
-    m_pCornflowerBlueBrush(NULL)
+    m_pCornflowerBlueBrush(NULL),
+    m_pConicGradient(NULL)
 {}
 
 D2dGradients::~D2dGradients()
@@ -47,6 +48,7 @@ D2dGradients::~D2dGradients()
     SafeRelease(&m_pRenderTarget);
     SafeRelease(&m_pLightSlateGrayBrush);
     SafeRelease(&m_pCornflowerBlueBrush);
+    SafeRelease(&m_pConicGradient);
 }
 
 void D2dGradients::RunMessageLoop()
@@ -134,6 +136,12 @@ HRESULT D2dGradients::CreateDeviceIndependentResources()
     // Create a Direct2D factory.
     hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pDirect2dFactory);
 
+    // Register the ConicGradientEffectD2D1 class with the Direct2D factory, 
+    if (SUCCEEDED(hr))
+    {
+        hr = conicgrad::ConicGradientEffectD2D1::Register(m_pDirect2dFactory);
+    }
+
     return hr;
 }
 
@@ -173,6 +181,68 @@ HRESULT D2dGradients::CreateDeviceResources()
                 D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
                 &m_pCornflowerBlueBrush
             );
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            if (!m_pConicGradient)
+            {
+                //m_pConicGradient = new conicgrad::ConicGradientEffectD2D1();
+
+
+                hr = mDC->CreateEffect(CLSID_ConicGradientEffect,
+                    getter_AddRefs(conicGradientEffect));
+
+
+
+
+
+
+
+                IUnknown* pEffectUnknown = nullptr;
+                hr = conicgrad::ConicGradientEffectD2D1::CreateEffect(&pEffectUnknown);
+
+                if (SUCCEEDED(hr) && pEffectUnknown)
+                {
+                    // Query for the ConicGradientEffectD2D1 interface
+                    hr = pEffectUnknown->QueryInterface(__uuidof(conicgrad::ConicGradientEffectD2D1), reinterpret_cast<void**>(&m_pConicGradient));
+                    pEffectUnknown->Release(); // Release the IUnknown pointer after querying
+                }
+            }
+
+            if (m_pConicGradient != nullptr)
+            {
+                m_pConicGradient->SetCenter(D2D1::Vector2F(static_cast<float>(rand() % 100), static_cast<float>(rand() % 100)));
+                m_pConicGradient->SetAngle(static_cast<float>(rand() % 360));
+                m_pConicGradient->SetStartOffset(static_cast<float>(rand() % 100) / 100.0f);
+                m_pConicGradient->SetEndOffset(static_cast<float>(rand() % 100) / 100.0f);
+                //m_pConicGradient->SetTransform(D2D1::Matrix3x2F::Identity());
+            }
+        }
+
+        if (SUCCEEDED(hr)) 
+        {
+			// Create a gradient stop collection
+			ID2D1GradientStopCollection* pGradientStops = nullptr;
+			D2D1_GRADIENT_STOP gradientStops[2];
+			gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::Red);
+			gradientStops[0].position = 0.0f;
+			gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::Blue);
+			gradientStops[1].position = 1.0f;
+
+			hr = m_pRenderTarget->CreateGradientStopCollection(
+				gradientStops,
+				2,
+				D2D1_GAMMA_2_2,
+				D2D1_EXTEND_MODE_CLAMP,
+				&pGradientStops
+			);
+
+			if (SUCCEEDED(hr))
+			{
+                hr = m_pConicGradient->SetStopCollection(pGradientStops);
+				pGradientStops->Release();
+			}
         }
     }
 
@@ -261,6 +331,12 @@ LRESULT CALLBACK D2dGradients::WndProc(HWND hwnd, UINT message, WPARAM wParam, L
     }
 
     return result;
+}
+
+void D2dGradients::ConfigureConicGradient()
+{
+    // Directly access methods of ConicGradientEffectD2D1
+    // Other configurations...
 }
 
 HRESULT D2dGradients::OnRender()

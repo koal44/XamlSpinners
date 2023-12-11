@@ -13,6 +13,7 @@
 #include <d2d1helper.h>
 #include <dwrite.h>
 #include <wincodec.h>
+#include "ConicGradientEffectD2D1.h"
 
 template<class Interface>
 inline void SafeRelease(
@@ -77,12 +78,15 @@ private:
         LPARAM lParam
     );
 
+    void ConfigureConicGradient();
+
 private:
     HWND m_hwnd;
-    ID2D1Factory* m_pDirect2dFactory;
+    ID2D1Factory1* m_pDirect2dFactory;
     ID2D1HwndRenderTarget* m_pRenderTarget;
     ID2D1SolidColorBrush* m_pLightSlateGrayBrush;
     ID2D1SolidColorBrush* m_pCornflowerBlueBrush;
+    conicgrad::ConicGradientEffectD2D1* m_pConicGradient;
 };
 
 

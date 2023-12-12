@@ -24,5 +24,6 @@ namespace ColorCraft
                 LerpByte(from.B, to.B, progress)
             );
         }
+
     }
 }

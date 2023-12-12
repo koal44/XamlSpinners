@@ -51,16 +51,19 @@ namespace ColorCraft.Demo
                 grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
                 // gradient image
-                var gradStops = new List<GradientStop>
+                var gradStops = new FreezableCollection<GradientStop>
                 {
-                    new GradientStop(startColorString, 0),
-                    new GradientStop(endColorString, 1)
+                    new(startColorString, 0),
+                    new(endColorString, 1)
                 };
-                var gradient = new Gradient(gradStops, mode);
-                var startPoint = new Point(0, 0);
-                var endPoint = new Point(_imgWidth, 0);
-                gradient.InitBitmap(_imgWidth, _imgHeight);
-                gradient.DrawLinearGradient(startPoint, endPoint);
+                var gradient = new LinearGradient()
+                {
+                    GradientStops = gradStops,
+                    LerpMode = mode,
+                    StartPoint = new Point(0, 0),
+                    EndPoint = new Point(_imgWidth, 0),
+                    DrawingSize = new Size(_imgWidth, _imgHeight)
+                };
                 var bitmap = gradient.Bitmap;
                 var image = new Image
                 {

@@ -3,52 +3,47 @@ using System.Windows.Media;
 
 namespace ColorCraft.Demo
 {
-    public record GradientPreset(string Name, List<GradientStop> Stops)
+    public record GradientPreset(string Name, FreezableCollection<GradientStop> Stops)
     {
         public static List<GradientPreset> GetDefaultPresets()
         {
             return new List<GradientPreset>
             {
-                new GradientPreset
-                ("Red Yellow Green", new List<GradientStop>() {
-                    new GradientStop(Colors.Red, 0.0),
-                    new GradientStop(Colors.Yellow, 0.5),
-                    new GradientStop(Colors.Green, 1.0)
+                new("Red Yellow Green", new() {
+                    new(Colors.Red, 0.0),
+                    new(Colors.Yellow, 0.5),
+                    new(Colors.Green, 1.0)
                 }),
                 // Wrap back to start color for a continuous cyclic gradient
-                new GradientPreset
-                ("Rainbow", new List<GradientStop>() {
-                    new GradientStop(Colors.Red, 0.0),
-                    new GradientStop(Colors.Orange, 0.10),
-                    new GradientStop(Colors.Yellow, 0.28),
-                    new GradientStop(Colors.Green, 0.42),
-                    new GradientStop(Colors.Cyan, 0.56),
-                    new GradientStop(Colors.Blue, 0.70),
-                    new GradientStop(Colors.Violet, 0.9),
-                    new GradientStop(Colors.Red, 1.0)  
+                new("Rainbow", new() {
+                    new(Colors.Red, 0.0),
+                    new(Colors.Orange, 0.10),
+                    new(Colors.Yellow, 0.28),
+                    new(Colors.Green, 0.42),
+                    new(Colors.Cyan, 0.56),
+                    new(Colors.Blue, 0.70),
+                    new(Colors.Violet, 0.9),
+                    new(Colors.Red, 1.0)  
                 }),
-                new GradientPreset
-                ("Sunset Glow", new List<GradientStop>() {
-                    new GradientStop(Colors.DarkOrange, 0.0),
-                    new GradientStop(Colors.Orange, 0.25),
-                    new GradientStop(Colors.Pink, 0.5),
-                    new GradientStop(Colors.Purple, 0.75),
-                    new GradientStop(Colors.DarkOrange, 1.0),
+                new("Sunset Glow", new() {
+                    new(Colors.DarkOrange, 0.0),
+                    new(Colors.Orange, 0.25),
+                    new(Colors.Pink, 0.5),
+                    new(Colors.Purple, 0.75),
+                    new(Colors.DarkOrange, 1.0),
                 }),
-                new GradientPreset
-                ("Ocean Breeze", new List<GradientStop>() {
-                    new GradientStop(Colors.LightBlue, 0.0),
-                    new GradientStop(Colors.DarkBlue, 0.33),
-                    new GradientStop(Colors.SeaGreen, 0.67),
-                    new GradientStop(Colors.LightBlue, 1.0)
+                new("Ocean Breeze", new() {
+                    new(Colors.LightBlue, 0.0),
+                    new(Colors.DarkBlue, 0.33),
+                    new(Colors.SeaGreen, 0.67),
+                    new(Colors.LightBlue, 1.0)
                 }),
-                new GradientPreset
-                ("Forest Walk", new List<GradientStop>() {
-                    new GradientStop(Colors.DarkGreen, 0.0),
-                    new GradientStop(Colors.Brown, 0.3),
-                    new GradientStop(Colors.Olive, 0.5),
-                    new GradientStop(Colors.LightGreen, 0.8),
-                    new GradientStop(Colors.DarkGreen, 1.0),
+                new("Forest Walk", new() {
+                    new(Colors.DarkGreen, 0.0),
+                    new(Colors.Brown, 0.3),
+                    new(Colors.Olive, 0.5),
+                    new(Colors.LightGreen, 0.8),
+                    new(Colors.DarkGreen, 1.0),
                 }),
             };
         }

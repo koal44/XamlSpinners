@@ -7,5 +7,6 @@
         Lab,
         SrgbBrightFix,
         Hsl,
+        Hard,
     }
 }

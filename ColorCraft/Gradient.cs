@@ -1,71 +1,219 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace ColorCraft
 {
-    public class Gradient : INotifyPropertyChanged
+    public abstract class Gradient : DependencyObject
     {
         #region Data
 
-        private readonly bool _useGammaCorrection;
-        private readonly List<MultiColorSpaceGradientStop> _stops;
-        private WriteableBitmap? _bitmap;
-        private ImageBrush? _brush;
+        private readonly FreezableCollection<MultiColorSpaceGradientStop> _stops;
+        protected WriteableBitmap? _bitmap;
 
         #endregion
 
-        #region Events
+        #region Dependency Properties
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        #endregion
-
-        #region Properties
-
-        public WriteableBitmap? Bitmap
+        // GradientStops
+        public FreezableCollection<GradientStop> GradientStops
         {
-            get => _bitmap;
-            set
+            get => (FreezableCollection<GradientStop>)GetValue(GradientStopsProperty);
+            set => SetValue(GradientStopsProperty, value);
+        }
+
+        public static readonly DependencyProperty GradientStopsProperty = DependencyProperty.Register(nameof(GradientStops), typeof(FreezableCollection<GradientStop>), typeof(Gradient), new FrameworkPropertyMetadata(null, OnGradientStopsChanged));
+
+        private static void OnGradientStopsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            onGradientStopsChangedCount++;
+            if (d is not Gradient self) return;
+            self.OnGradientStopsChanged(e);
+        }
+
+        protected virtual void OnGradientStopsChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue is FreezableCollection<GradientStop> oldStops)
+                oldStops.CollectionChanged -= GradientStops_CollectionChanged;
+
+            if (e.NewValue is FreezableCollection<GradientStop> newStops)
+                newStops.CollectionChanged += GradientStops_CollectionChanged;
+
+            UpdateStops();
+        }
+
+        private void GradientStops_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateStops();
+        }
+
+        private void UpdateStops()
+        {
+            updateStopsCount++;
+            _stops.Clear();
+
+            if (GradientStops == null) return;
+
+            foreach (var stop in GradientStops)
             {
-                if (_bitmap != value)
+                var multiColorStop = new MultiColorSpaceGradientStop(stop.Color, stop.Offset, UseGammaCorrection);
+                _stops.Add(multiColorStop);
+            }
+            _stops.Sort((a, b) => a.Offset.CompareTo(b.Offset));
+
+            UpdateGradient();
+        }
+
+        // UseGammaCorrection
+        public bool UseGammaCorrection
+        {
+            get => (bool)GetValue(UseGammaCorrectionProperty);
+            set => SetValue(UseGammaCorrectionProperty, value);
+        }
+
+        public static readonly DependencyProperty UseGammaCorrectionProperty = DependencyProperty.Register(nameof(UseGammaCorrection), typeof(bool), typeof(Gradient), new FrameworkPropertyMetadata(true, OnUseGammaCorrectionChanged));
+
+        private static void OnUseGammaCorrectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            onUseGammaCorrectionChangedCount++;
+            if (d is not Gradient self) return;
+            self.OnUseGammaCorrectionChanged(e);
+        }
+
+        protected virtual void OnUseGammaCorrectionChanged(DependencyPropertyChangedEventArgs e)
+        {
+            UpdateGradient();
+        }
+
+        // LerpMode
+        public LerpMode LerpMode
+        {
+            get => (LerpMode)GetValue(LerpModeProperty);
+            set => SetValue(LerpModeProperty, value);
+        }
+
+        public static readonly DependencyProperty LerpModeProperty = DependencyProperty.Register(nameof(LerpMode), typeof(LerpMode), typeof(Gradient), new FrameworkPropertyMetadata(LerpMode.Rgb, OnLerpModeChanged));
+
+        private static void OnLerpModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            onLerpModeChangedCount++;
+            if (d is not Gradient self) return;
+            self.OnLerpModeChanged(e);
+        }
+
+        protected virtual void OnLerpModeChanged(DependencyPropertyChangedEventArgs e)
+        {
+            UpdateGradient();
+        }
+
+        // Bitmap
+        // Bitmap controls initialization so do not call dp getter internally
+        private static readonly DependencyPropertyKey BitmapPropertyKey = DependencyProperty.RegisterReadOnly(nameof(Bitmap), typeof(WriteableBitmap), typeof(Gradient), new FrameworkPropertyMetadata(default(WriteableBitmap), OnBitmapChanged));
+
+        public static readonly DependencyProperty BitmapProperty = BitmapPropertyKey.DependencyProperty;
+
+        public WriteableBitmap Bitmap
+        {
+            get
+            {
+                if (_bitmap == null)
                 {
-                    _bitmap = value;
-                    OnPropertyChanged(nameof(Bitmap));
+                    CreateBitmap();
                 }
+                return (WriteableBitmap)GetValue(BitmapProperty);
             }
         }
 
-        public ImageBrush? Brush
+        protected void SetBitmap(WriteableBitmap value)
         {
-            get => _brush;
-            set
-            {
-                if (_brush != value)
-                {
-                    _brush = value;
-                    OnPropertyChanged(nameof(Brush));
-                }
-            }
+            _bitmap = value;
+            SetValue(BitmapPropertyKey, value);
         }
 
-        public LerpMode LerpMode { get; set; }
+        private static void OnBitmapChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            onBitmapChangedCount++;
+            if (d is not Gradient self) return;
+            self.OnBitmapChanged(e);
+        }
+
+        protected virtual void OnBitmapChanged(DependencyPropertyChangedEventArgs e) { }
+
+        // Brush
+        private static readonly DependencyPropertyKey BrushPropertyKey = DependencyProperty.RegisterReadOnly(nameof(Brush), typeof(ImageBrush), typeof(Gradient), new FrameworkPropertyMetadata(null, OnBrushChanged));
+
+        public static readonly DependencyProperty BrushProperty = BrushPropertyKey.DependencyProperty;
+
+        public ImageBrush Brush => (ImageBrush)GetValue(BrushProperty);
+
+        protected void SetBrush(ImageBrush value) => SetValue(BrushPropertyKey, value);
+
+        private static void OnBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            onBrushChangedCount++;
+            if (d is not Gradient self) return;
+            self.OnBrushChanged(e);
+        }
+
+        protected virtual void OnBrushChanged(DependencyPropertyChangedEventArgs e) { }
+
+        // DrawingSize
+        public Size DrawingSize
+        {
+            get => (Size)GetValue(DrawingSizeProperty);
+            set => SetValue(DrawingSizeProperty, value);
+        }
+
+        public static readonly DependencyProperty DrawingSizeProperty = DependencyProperty.Register(nameof(DrawingSize), typeof(Size), typeof(Gradient), new FrameworkPropertyMetadata(new Size(300,300), OnDrawingSizeChanged), OnValidate);
+
+        private static void OnDrawingSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not Gradient self) return;
+            self.OnDrawingSizeChanged(e);
+        }
+
+        protected virtual void OnDrawingSizeChanged(DependencyPropertyChangedEventArgs e)
+        {
+            onDrawingSizeChangedCount++;
+
+            // only create a new bitmap if one was already created. lazy creation so we don't want to rush it
+            if (_bitmap != null)
+            {
+                SetBitmap(new WriteableBitmap((int)DrawingSize.Width, (int)DrawingSize.Height, 96, 96, PixelFormats.Pbgra32, null));
+            }
+            UpdateGradient();
+
+        }
+
+        private static bool OnValidate(object value)
+        {
+            if (value is not Size size) return false;
+
+            // only allow integer sizes
+            return size.Width == (int)size.Width && size.Height == (int)size.Height;
+        }
 
         #endregion
 
         #region Constructors
 
-        public Gradient(List<GradientStop> stops, LerpMode mode = LerpMode.Rgb, bool useGammaCorrection = true)
+        public Gradient()
         {
-            LerpMode = mode;
-            _stops = stops.OrderBy(s => s.Offset)
-                .Select(x => new MultiColorSpaceGradientStop(x, useGammaCorrection))
-                .ToList();
-            _useGammaCorrection = useGammaCorrection;
+            _stops = new FreezableCollection<MultiColorSpaceGradientStop>();
+            GradientStops = new FreezableCollection<GradientStop>();
+
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // All properties should be set by now
+                if (_bitmap == null)
+                {
+                    CreateBitmap();
+                }
+            }), DispatcherPriority.Loaded);
         }
 
         #endregion
@@ -104,10 +252,11 @@ namespace ColorCraft
             var lerpedColor = LerpMode switch
             {
                 LerpMode.Rgb => Utils.LerpColor(startStop.Color, endStop.Color, localProgress),
-                LerpMode.Srgb => RgbLinear.Lerp(startStop.RgbLinear, endStop.RgbLinear, localProgress).ToColor(_useGammaCorrection),
+                LerpMode.Srgb => RgbLinear.Lerp(startStop.RgbLinear, endStop.RgbLinear, localProgress).ToColor(UseGammaCorrection),
                 LerpMode.Hsl => Hsl.Lerp(startStop.Hsl, endStop.Hsl, localProgress).ToColor(),
-                LerpMode.Lab => Lab.Lerp(startStop.Lab, endStop.Lab, localProgress).ToColor(_useGammaCorrection),
-                LerpMode.SrgbBrightFix => RgbLinear.BrightFixLerp(startStop.RgbLinear, endStop.RgbLinear, localProgress).ToColor(_useGammaCorrection),
+                LerpMode.Lab => Lab.Lerp(startStop.Lab, endStop.Lab, localProgress).ToColor(UseGammaCorrection),
+                LerpMode.SrgbBrightFix => RgbLinear.BrightFixLerp(startStop.RgbLinear, endStop.RgbLinear, localProgress).ToColor(UseGammaCorrection),
+                LerpMode.Hard => startStop.Color,
                 _ => throw new NotImplementedException(),
             };
 
@@ -115,123 +264,57 @@ namespace ColorCraft
             return lerpedColor;
         }
 
-        public void InitBitmap(int imgWidth = 200, int imgHeight = 200)
+        protected void UpdateGradient()
         {
-            Bitmap = new WriteableBitmap(imgWidth, imgHeight, 96, 96, PixelFormats.Pbgra32, null);
+            updateGradientCount++;
+
+            // guard against multiple updates
+            if (_bitmap == null) return;
+
+            updateGradientPastGuardCount++;
+
+            _bitmap?.Lock();
+            DrawGradient();
+            //_bitmap?.AddDirtyRect(new Int32Rect(0, 0, Bitmap.PixelWidth, Bitmap.PixelHeight));
+            _bitmap?.Unlock();
+
+            var brush = new ImageBrush(_bitmap);
+            //brush.Freeze();
+            SetBrush(brush);
         }
 
-        public void DrawLinearGradient(Point startPoint, Point endPoint)
+        public abstract void DrawGradient();
+
+        private void CreateBitmap()
         {
-            if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
-
-            _bitmap.Lock();
-
-            int[] pixelsBgra = new int[_bitmap.PixelWidth * _bitmap.PixelHeight];
-            var gradientVector = new Vector(endPoint.X - startPoint.X, endPoint.Y - startPoint.Y);
-            var gradientLengthSquared = gradientVector.LengthSquared;
-
-            int i = 0;
-            for (int y = 0; y < _bitmap.PixelHeight; y++)
-            {
-                for (int x = 0; x < _bitmap.PixelWidth; x++)
-                {
-                    var relativeVector = new Vector(x - startPoint.X, y - startPoint.Y);
-
-                    // progress = |proj_b(a)| / |b| = (a . b / |b|^2)
-                    var progress = Vector.Multiply(relativeVector, gradientVector) / gradientLengthSquared;
-                    progress = Math.Clamp(progress, 0, 1);
-
-                    var color = ColorAt(progress);
-                    int bgra = (color.B << 0) | (color.G << 8) | (color.R << 16) | (color.A << 24);
-                    pixelsBgra[i++] = bgra;
-                }
-            }
-
-            var sourceRect = new Int32Rect(0, 0, _bitmap.PixelWidth, _bitmap.PixelHeight);
-            int stride = _bitmap.PixelWidth * (_bitmap.Format.BitsPerPixel / 8);
-            _bitmap.WritePixels(sourceRect, pixelsBgra, stride, 0, 0);
-            _bitmap.Unlock();
-            Brush = new ImageBrush(_bitmap);
-        }
-
-        public void DrawConicGradient(float angleOffset, float spiralStrength, float kaleidoscopeCount)
-        {
-            if (_bitmap == null) throw new InvalidOperationException("Bitmap has not been created yet");
-            _bitmap.Lock();
-
-            const float TwoPi = 2f * MathF.PI;
-            int maxRadiusSquared = _bitmap.PixelWidth * _bitmap.PixelWidth + _bitmap.PixelHeight * _bitmap.PixelHeight;
-
-            int[] pixelsBgra = new int[_bitmap.PixelWidth * _bitmap.PixelHeight];
-
-            float centerX = _bitmap.PixelWidth / 2f;
-            float centerY = _bitmap.PixelHeight / 2f;
-
-            // Normalize the angleOffsets
-            angleOffset %= TwoPi;
-            angleOffset += angleOffset < 0 ? TwoPi : 0; // angleOffset is now in [0, 2pi)
-
-            float modulusAngle = TwoPi / kaleidoscopeCount;
-
-            // fix the discontinuity ray for non-integral kaleidoscopeCounts to be the same as the angleOffset
-            float kaleidoscopeRayOffset = angleOffset;
-
-            bool shouldOffsetKaleidoscopeDiscontinuityRay =
-                kaleidoscopeCount != (int)kaleidoscopeCount &&
-                kaleidoscopeRayOffset != 0;
-
-            int i = 0;
-            float dy = centerY;
-            float angle;
-            for (int y = 0; y < _bitmap.PixelHeight; ++y, --dy)
-            {
-                float dx = -centerX;
-                for (int x = 0; x < _bitmap.PixelWidth; ++x, ++dx)
-                {
-                    // Calculate angle for the current pixel
-                    if (shouldOffsetKaleidoscopeDiscontinuityRay)
-                    {
-                        // Atan2 has an inherent discontinuity at the negative x-axis, which becomes apparent when
-                        // using a non integral kaleidoscope count. We can choose where the discontinuity
-                        // ray is by rotating before calculating atan2.
-                        float dxRot = dx * MathF.Cos(kaleidoscopeRayOffset) - dy * MathF.Sin(kaleidoscopeRayOffset);
-                        float dyRot = dx * MathF.Sin(kaleidoscopeRayOffset) + dy * MathF.Cos(kaleidoscopeRayOffset);
-                        angle = MathF.Atan2(dyRot, dxRot) + MathF.PI + 0; // angleOffset - kaleidoscopeRayOffset == 0;
-                    }
-                    else
-                    {
-                        angle = MathF.Atan2(dy, dx) + MathF.PI + angleOffset; // angle is now in [0, 4pi)
-                    }
-
-                    if (spiralStrength != 0)
-                    {
-                        float radialProgress = MathF.Sqrt((dy * dy + dx * dx) / maxRadiusSquared);
-                        angle += radialProgress * spiralStrength; // angle is now in (-inf, inf)
-                    }
-                    angle %= modulusAngle; // angle is now in (-modulusAngle, modulusAngle)
-                    angle = angle < 0 ? angle + modulusAngle : angle; // angle is now in [0, modulusAngle)
-                    float progress = angle / modulusAngle; // progress is [0, 1)
-
-                    var color = ColorAt(progress);
-
-                    int bgra = (color.B << 0) | (color.G << 8) | (color.R << 16) | (color.A << 24);
-                    pixelsBgra[i++] = bgra;
-                }
-            }
-
-            var sourceRect = new Int32Rect(0, 0, _bitmap.PixelWidth, _bitmap.PixelHeight);
-            int stride = _bitmap.PixelWidth * (_bitmap.Format.BitsPerPixel / 8);
-            _bitmap.WritePixels(sourceRect, pixelsBgra, stride, 0, 0);
-            _bitmap.Unlock();
-            Brush = new ImageBrush(_bitmap);
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            SetBitmap(new WriteableBitmap((int)DrawingSize.Width, (int)DrawingSize.Height, 96, 96, PixelFormats.Pbgra32, null));
+            UpdateGradient();
         }
 
         #endregion
 
+        // Static counters for each event
+        private static int onGradientStopsChangedCount = 0;
+        private static int onUseGammaCorrectionChangedCount = 0;
+        private static int onLerpModeChangedCount = 0;
+        private static int onBitmapChangedCount = 0;
+        private static int onBrushChangedCount = 0;
+        private static int onDrawingSizeChangedCount = 0;
+        private static int updateGradientCount = 0;
+        private static int updateStopsCount = 0;
+        private static int updateGradientPastGuardCount = 0;
+
+        public static void DumpEventCounts()
+        {
+            Debug.Print($"OnGradientStopsChanged Count: {onGradientStopsChangedCount}");
+            Debug.Print($"OnUseGammaCorrectionChanged Count: {onUseGammaCorrectionChangedCount}");
+            Debug.Print($"OnLerpModeChanged Count: {onLerpModeChangedCount}");
+            Debug.Print($"OnBitmapChanged Count: {onBitmapChangedCount}");
+            Debug.Print($"OnBrushChanged Count: {onBrushChangedCount}");
+            Debug.Print($"OnDrawingSizeChanged Count: {onDrawingSizeChangedCount}");
+            Debug.Print($"UpdateGradient Count: {updateGradientCount}");
+            Debug.Print($"UpdateStops Count: {updateStopsCount}");
+            Debug.Print($"UpdateGradientPastGuard Count: {updateGradientPastGuardCount}");
+        }
     }
 }

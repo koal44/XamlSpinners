@@ -36,12 +36,16 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="10" />
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="10" />
+        <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
+
+      <!--  LerpMode  -->
       <TextBlock Grid.Row="0"
                  Grid.Column="0"
                  Margin="0,0,10,0"
@@ -51,7 +55,9 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Width="120"
-                SelectedItem="{Binding Mode}" />
+                SelectedItem="{Binding Gradient.LerpMode}" />
+
+      <!--  AngleOffset  -->
       <TextBlock Grid.Row="2"
                  Grid.Column="0"
                  Margin="0,0,10,0"
@@ -63,50 +69,88 @@
               Maximum="360"
               Minimum="0"
               TickFrequency="1"
-              Value="{Binding AngleOffset, Delay=10}" />
+              Value="{Binding Gradient.AngleOffset, Delay=10}" />
       <TextBlock Grid.Row="2"
                  Grid.Column="2"
                  Width="50"
                  Margin="5,0,0,0"
                  Text="{Binding ElementName=AngleSlider, Path=Value}" />
+
+      <!--  Center  -->
       <TextBlock Grid.Row="4"
+                 Grid.Column="0"
+                 Margin="0,0,10,0"
+                 Text="Center:" />
+      <Grid Grid.Row="4"
+            Grid.Column="1">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Slider x:Name="CenterXSlider"
+                Grid.Column="0"
+                Maximum="1"
+                Minimum="0"
+                Value="{Binding Gradient.CenterX, Delay=10}" />
+        <Slider x:Name="CenterYSlider"
+                Grid.Column="1"
+                Maximum="1"
+                Minimum="0"
+                Value="{Binding Gradient.CenterY, Delay=10}" />
+      </Grid>
+      <StackPanel Grid.Row="4"
+                  Grid.Column="2"
+                  Orientation="Horizontal">
+        <TextBlock Width="25"
+                   Margin="5,0,0,0"
+                   Text="{Binding ElementName=CenterXSlider, Path=Value, StringFormat={}{0:F1}}" />
+        <TextBlock Width="25"
+                   Text="{Binding ElementName=CenterYSlider, Path=Value, StringFormat={}{0:F1}}" />
+      </StackPanel>
+
+      <!--  SpiralStrength  -->
+      <TextBlock Grid.Row="6"
                  Grid.Column="0"
                  Margin="0,0,10,0"
                  Text="SpiralStrength:" />
       <Slider x:Name="SpiralSlider"
-              Grid.Row="4"
+              Grid.Row="6"
               Grid.Column="1"
               Maximum="50"
               Minimum="0"
-              Value="{Binding SpiralStrength, Delay=10}" />
-      <TextBlock Grid.Row="4"
+              Value="{Binding Gradient.SpiralStrength, Delay=10}" />
+      <TextBlock Grid.Row="6"
                  Grid.Column="2"
                  Width="50"
                  Margin="5,0,0,0"
                  Text="{Binding ElementName=SpiralSlider, Path=Value, StringFormat={}{0:F1}}" />
-      <TextBlock Grid.Row="6"
+
+      <!--  KaleidoscopeCount  -->
+      <TextBlock Grid.Row="8"
                  Grid.Column="0"
                  Margin="0,0,10,0"
                  Text="KaleidoscopeCount:" />
       <Slider x:Name="KaleidoscopeSlider"
-              Grid.Row="6"
+              Grid.Row="8"
               Grid.Column="1"
               IsSnapToTickEnabled="True"
               Maximum="5"
               TickFrequency="0.1"
-              Value="{Binding KaleidoscopeCount, Delay=10}" />
-      <TextBlock Grid.Row="6"
+              Value="{Binding Gradient.KaleidoscopeCount, Delay=10}" />
+      <TextBlock Grid.Row="8"
                  Grid.Column="2"
                  Width="50"
                  Margin="5,0,0,0"
                  Text="{Binding ElementName=KaleidoscopeSlider, Path=Value, StringFormat={}{0:F1}}" />
-      <TextBlock Grid.Row="8"
+
+      <!--  StopsPresets  -->
+      <TextBlock Grid.Row="10"
                  Grid.Column="0"
                  Margin="0,0,10,0"
                  VerticalAlignment="Center"
                  Text="StopsPresets:" />
       <ComboBox Name="GradientStopsPresetsComboBox"
-                Grid.Row="8"
+                Grid.Row="10"
                 Grid.Column="1"
                 DisplayMemberPath="Name"
                 ItemsSource="{Binding Presets}"

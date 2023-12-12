@@ -7,15 +7,22 @@ namespace ColorCraft.Demo
 {
     public partial class ConicGradientControl : UserControl
     {
+        #region Properties
+
         public List<GradientPreset> Presets { get; set; }
 
-        public Gradient Gradient
+        #endregion
+
+        #region Dependency Properties
+
+        // Gradient
+        public ConicGradient Gradient
         {
-            get => (Gradient)GetValue(GradientProperty);
+            get => (ConicGradient)GetValue(GradientProperty);
             set => SetValue(GradientProperty, value);
         }
 
-        public static readonly DependencyProperty GradientProperty = DependencyProperty.Register(nameof(Gradient), typeof(Gradient), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(Gradient), OnGradientChanged));
+        public static readonly DependencyProperty GradientProperty = DependencyProperty.Register(nameof(Gradient), typeof(ConicGradient), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(ConicGradient), OnGradientChanged));
 
         private static void OnGradientChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -23,88 +30,9 @@ namespace ColorCraft.Demo
             self.OnGradientChanged(e);
         }
 
-        protected virtual void OnGradientChanged(DependencyPropertyChangedEventArgs e)
-        {
-            UpdateGradient();
-        }
+        protected virtual void OnGradientChanged(DependencyPropertyChangedEventArgs e) { }
 
-        public LerpMode Mode
-        {
-            get => (LerpMode)GetValue(ModeProperty);
-            set => SetValue(ModeProperty, value);
-        }
-
-        public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(nameof(Mode), typeof(LerpMode), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(LerpMode), OnModeChanged));
-
-        private static void OnModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not ConicGradientControl self) return;
-            self.OnModeChanged(e);
-        }
-
-        protected virtual void OnModeChanged(DependencyPropertyChangedEventArgs e)
-        {
-            Gradient.LerpMode = Mode;
-            UpdateGradient();
-        }
-
-        public float AngleOffset
-        {
-            get => (float)GetValue(AngleOffsetProperty);
-            set => SetValue(AngleOffsetProperty, value);
-        }
-
-        public static readonly DependencyProperty AngleOffsetProperty = DependencyProperty.Register(nameof(AngleOffset), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(default(float), OnAngleOffsetChanged));
-
-        private static void OnAngleOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not ConicGradientControl self) return;
-            self.OnAngleOffsetChanged(e);
-        }
-
-        protected virtual void OnAngleOffsetChanged(DependencyPropertyChangedEventArgs e)
-        {
-            UpdateGradient();
-        }
-
-        public float SpiralStrength
-        {
-            get => (float)GetValue(SpiralStrengthProperty);
-            set => SetValue(SpiralStrengthProperty, value);
-        }
-
-        public static readonly DependencyProperty SpiralStrengthProperty = DependencyProperty.Register(nameof(SpiralStrength), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(0f, OnSpiralStrengthChanged));
-
-        private static void OnSpiralStrengthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not ConicGradientControl self) return;
-            self.OnSpiralStrengthChanged(e);
-        }
-
-        protected virtual void OnSpiralStrengthChanged(DependencyPropertyChangedEventArgs e)
-        {
-            UpdateGradient();
-        }
-
-        public float KaleidoscopeCount
-        {
-            get => (float)GetValue(KaleidoscopeCountProperty);
-            set => SetValue(KaleidoscopeCountProperty, value);
-        }
-
-        public static readonly DependencyProperty KaleidoscopeCountProperty = DependencyProperty.Register(nameof(KaleidoscopeCount), typeof(float), typeof(ConicGradientControl), new FrameworkPropertyMetadata(1f, OnKaleidoscopeCountChanged));
-
-        private static void OnKaleidoscopeCountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not ConicGradientControl self) return;
-            self.OnKaleidoscopeCountChanged(e);
-        }
-
-        protected virtual void OnKaleidoscopeCountChanged(DependencyPropertyChangedEventArgs e)
-        {
-            UpdateGradient();
-        }
-
+        // SelectedGradientStopPresetIndex
         public int SelectedGradientStopPresetIndex
         {
             get => (int)GetValue(SelectedGradientStopPresetIndexProperty);
@@ -122,32 +50,25 @@ namespace ColorCraft.Demo
         protected virtual void OnSelectedGradientStopPresetIndexChanged(DependencyPropertyChangedEventArgs e)
         {
             var stops = Presets[SelectedGradientStopPresetIndex].Stops;
-            Gradient = new Gradient(stops, Mode);
-
-            //int width = 300;
-            //int height = 300;
-            //Gradient.CreateBitmap(width, height);
-            Gradient.InitBitmap();
-            UpdateGradient();
+            Gradient.GradientStops = stops;
         }
+
+        #endregion
+
+        #region Constructors
 
         public ConicGradientControl()
         {
             DataContext = this;
             Presets = GradientPreset.GetDefaultPresets();
+            Gradient = new ConicGradient();
             InitializeComponent();
             SelectedGradientStopPresetIndex = 0;
             LerpSelectionComboBox.ItemsSource = Enum.GetValues(typeof(LerpMode));
             LerpSelectionComboBox.SelectedIndex = 0;
         }
 
-        private void UpdateGradient()
-        {
-            if (Gradient == null) return;
-            if (Gradient.Bitmap == null) return;
+        #endregion
 
-            var startOffset = AngleOffset * MathF.PI / 180;
-            Gradient.DrawConicGradient(startOffset, SpiralStrength, KaleidoscopeCount);
-        }
     }
 }

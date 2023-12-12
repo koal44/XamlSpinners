@@ -1,40 +1,103 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ColorCraft
 {
-    public class MultiColorSpaceGradientStop
+    public class MultiColorSpaceGradientStop : Animatable
     {
-        private readonly bool _useGammaCorrection;
-        private readonly double _offset;
+        #region Fields
 
         // Cached color spaces
-        private readonly Color _color;
         private RgbLinear? _rgbLinear;
         private Hsl? _hsl;
         private Lab? _lab;
 
-        public double Offset => _offset;
+        #endregion
 
-        public Color Color => _color;
+        #region Dependency Properties
 
-        public RgbLinear RgbLinear => _rgbLinear ??= RgbLinear.FromColor(_color, _useGammaCorrection);
+        public Color Color
+        {
+            get => (Color)GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
+        }
 
-        public Hsl Hsl => _hsl ??= Hsl.FromColor(_color);
+        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(nameof(Color), typeof(Color), typeof(MultiColorSpaceGradientStop), new FrameworkPropertyMetadata(default(Color), OnColorChanged));
 
-        public Lab Lab => _lab ??= Lab.FromColor(_color, _useGammaCorrection);
+        private static void OnColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not MultiColorSpaceGradientStop self) return;
+            self.OnColorChanged(e);
+        }
+
+        protected virtual void OnColorChanged(DependencyPropertyChangedEventArgs e) { }
+
+        public double Offset
+        {
+            get => (double)GetValue(OffsetProperty);
+            set => SetValue(OffsetProperty, value);
+        }
+
+        public static readonly DependencyProperty OffsetProperty = DependencyProperty.Register(nameof(Offset), typeof(double), typeof(MultiColorSpaceGradientStop), new FrameworkPropertyMetadata(default(double), OnOffsetChanged));
+
+        private static void OnOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not MultiColorSpaceGradientStop self) return;
+            self.OnOffsetChanged(e);
+        }
+
+        protected virtual void OnOffsetChanged(DependencyPropertyChangedEventArgs e) { }
+
+        public bool UseGammaCorrection
+        {
+            get => (bool)GetValue(UseGammaCorrectionProperty);
+            set => SetValue(UseGammaCorrectionProperty, value);
+        }
+
+        public static readonly DependencyProperty UseGammaCorrectionProperty = DependencyProperty.Register(nameof(UseGammaCorrection), typeof(bool), typeof(MultiColorSpaceGradientStop), new FrameworkPropertyMetadata(default(bool), OnUseGammaCorrectionChanged));
+
+        private static void OnUseGammaCorrectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not MultiColorSpaceGradientStop self) return;
+            self.OnUseGammaCorrectionChanged(e);
+        }
+
+        protected virtual void OnUseGammaCorrectionChanged(DependencyPropertyChangedEventArgs e) { }
+
+        #endregion
+
+        #region Properties
+
+        public RgbLinear RgbLinear => _rgbLinear ??= RgbLinear.FromColor(Color, UseGammaCorrection);
+
+        public Hsl Hsl => _hsl ??= Hsl.FromColor(Color);
+
+        public Lab Lab => _lab ??= Lab.FromColor(Color, UseGammaCorrection);
+
+        #endregion
+
+        #region Constructors
+
+        public MultiColorSpaceGradientStop() { }
 
         public MultiColorSpaceGradientStop(Color color, double offset, bool useGammaCorrection)
         {
-            _color = color;
-            _offset = offset;
-            _useGammaCorrection = useGammaCorrection;
+            Color = color;
+            Offset = offset;
+            UseGammaCorrection = useGammaCorrection;
         }
 
-        public MultiColorSpaceGradientStop(GradientStop stop, bool useGammaCorrection)
-        {
-            _color = stop.Color;
-            _offset = stop.Offset;
-            _useGammaCorrection = useGammaCorrection;
-        }
+        #endregion
+
+        #region Freezable
+
+        protected override Freezable CreateInstanceCore() => new MultiColorSpaceGradientStop();
+
+        public new MultiColorSpaceGradientStop Clone() => (MultiColorSpaceGradientStop)base.Clone();
+
+        public new MultiColorSpaceGradientStop CloneCurrentValue() => (MultiColorSpaceGradientStop)base.CloneCurrentValue();
+
+        #endregion
     }
 }

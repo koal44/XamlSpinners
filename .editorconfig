@@ -1,0 +1,15 @@
+# Top-most EditorConfig file
+root = true
+
+# All Files
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C++ Files
+# C++ Files
+[*.{cpp,h,cxx,hpp}]
+indent_style = space
+indent_size = 4
+end_of_line = lf

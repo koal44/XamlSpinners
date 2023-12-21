@@ -1,10 +1,9 @@
 #pragma once
 #include "pch.h"
-#include "macros.h"
+#include "Macros.h"
 
 #include <d2d1_1.h>
 #include <d2d1effectauthor.h>
-#include <d2d1effecthelpers.h>
 
 // {463B1810-1A08-4786-BEF0-97EC8E8C25C8}
 DEFINE_GUID(CLSID_ConicGradientEffect, 0x463b1810, 0x1a08, 0x4786, 0xbe, 0xf0, 0x97, 0xec, 0x8e, 0x8c, 0x25, 0xc8);
@@ -18,7 +17,7 @@ enum {
     CONIC_PROP_TRANSFORM
 };
 
-class ConicGradientEffectD2D1 final
+class ConicGradientEffect final
     : public ID2D1EffectImpl
     , public ID2D1DrawTransform
 {
@@ -71,7 +70,7 @@ public:
 private:
     ComPtr<ID2D1ResourceTexture> CreateGradientTexture();
 
-    ConicGradientEffectD2D1();
+    ConicGradientEffect();
 
     uint32_t mRefCount;
     ComPtr<ID2D1GradientStopCollection> mStopCollection;

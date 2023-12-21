@@ -1,6 +1,37 @@
-#pragma once
+
 #include "pch.h"
 #include "D2dGradients.h"
+
+// Entry point of the application.
+int WINAPI WinMain(
+    _In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPSTR lpCmdLine,
+    _In_ int nCmdShow
+)
+{
+    // Use HeapSetInformation to specify that the process should
+    // terminate if the heap manager detects an error in any heap used
+    // by the process.
+    // The return value is ignored, because we want to continue running in the
+    // unlikely event that HeapSetInformation fails.
+    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
+
+    if (SUCCEEDED(CoInitialize(NULL)))
+    {
+        {
+            D2dGradients app;
+
+            if (SUCCEEDED(app.Initialize()))
+            {
+                app.RunMessageLoop();
+            }
+        }
+        CoUninitialize();
+    }
+
+    return 0;
+}
 
 D2dGradients::D2dGradients() :
     m_hwnd(NULL),
@@ -20,6 +51,16 @@ D2dGradients::~D2dGradients()
     SafeRelease(&m_pConicGradient);
 }
 
+void D2dGradients::RunMessageLoop()
+{
+    MSG msg;
+
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+}
 
 HRESULT D2dGradients::Initialize()
 {
@@ -44,6 +85,12 @@ HRESULT D2dGradients::Initialize()
         wcex.lpszClassName = L"D2DDemoApp";
 
         RegisterClassEx(&wcex);
+
+        // In terms of using the correct DPI, to create a window at a specific size
+        // like this, the procedure is to first create the window hidden. Then we get
+        // the actual DPI from the HWND (which will be assigned by whichever monitor
+        // the window is created on). Then we use SetWindowPos to resize it to the
+        // correct DPI-scaled size, then we use ShowWindow to show it.
 
         m_hwnd = CreateWindow(
             L"D2DDemoApp",
@@ -135,6 +182,68 @@ HRESULT D2dGradients::CreateDeviceResources()
                 &m_pCornflowerBlueBrush
             );
         }
+
+        //if (SUCCEEDED(hr))
+        //{
+        //    if (!m_pConicGradient)
+        //    {
+        //        //m_pConicGradient = new conicgrad::ConicGradientEffectD2D1();
+
+
+        //        hr = mDC->CreateEffect(CLSID_ConicGradientEffect,
+        //            getter_AddRefs(conicGradientEffect));
+
+
+
+
+
+
+
+        //        IUnknown* pEffectUnknown = nullptr;
+        //        hr = conicgrad::ConicGradientEffectD2D1::CreateEffect(&pEffectUnknown);
+
+        //        if (SUCCEEDED(hr) && pEffectUnknown)
+        //        {
+        //            // Query for the ConicGradientEffectD2D1 interface
+        //            hr = pEffectUnknown->QueryInterface(__uuidof(conicgrad::ConicGradientEffectD2D1), reinterpret_cast<void**>(&m_pConicGradient));
+        //            pEffectUnknown->Release(); // Release the IUnknown pointer after querying
+        //        }
+        //    }
+
+        //    if (m_pConicGradient != nullptr)
+        //    {
+        //        m_pConicGradient->SetCenter(D2D1::Vector2F(static_cast<float>(rand() % 100), static_cast<float>(rand() % 100)));
+        //        m_pConicGradient->SetAngle(static_cast<float>(rand() % 360));
+        //        m_pConicGradient->SetStartOffset(static_cast<float>(rand() % 100) / 100.0f);
+        //        m_pConicGradient->SetEndOffset(static_cast<float>(rand() % 100) / 100.0f);
+        //        //m_pConicGradient->SetTransform(D2D1::Matrix3x2F::Identity());
+        //    }
+        //}
+
+   //     if (SUCCEEDED(hr)) 
+   //     {
+            //// Create a gradient stop collection
+            //ID2D1GradientStopCollection* pGradientStops = nullptr;
+            //D2D1_GRADIENT_STOP gradientStops[2];
+            //gradientStops[0].color = D2D1::ColorF(D2D1::ColorF::Red);
+            //gradientStops[0].position = 0.0f;
+            //gradientStops[1].color = D2D1::ColorF(D2D1::ColorF::Blue);
+            //gradientStops[1].position = 1.0f;
+
+            //hr = m_pRenderTarget->CreateGradientStopCollection(
+            //	gradientStops,
+            //	2,
+            //	D2D1_GAMMA_2_2,
+            //	D2D1_EXTEND_MODE_CLAMP,
+            //	&pGradientStops
+            //);
+
+            //if (SUCCEEDED(hr))
+            //{
+   //             hr = m_pConicGradient->SetStopCollection(pGradientStops);
+            //	pGradientStops->Release();
+            //}
+   //     }
     }
 
     return hr;
@@ -171,8 +280,8 @@ LRESULT CALLBACK D2dGradients::WndProc(HWND hwnd, UINT message, WPARAM wParam, L
                 ::GetWindowLongPtrW(
                     hwnd,
                     GWLP_USERDATA)
-            )
-        );
+                )
+            );
 
         bool wasHandled = false;
 

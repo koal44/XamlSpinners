@@ -1,15 +1,11 @@
 #pragma once
 #include "pch.h"
-#include "DeviceColor.h"
-
-#include "ConicGradientEffectD2D1.h"
-#include "macros.h"
-
+#include "ConicGradientEffect.h"
+#include "Types.h"
 #include <vector>
-#include <assert.h>
-#include "Sample.h"
 #include "Matrix.h"
-#include <iostream>
+#include <d2d1effecthelpers.h>
+#include "Shader.h"
 
 static const PCWSTR kXmlDescription =
 XML(
@@ -44,12 +40,12 @@ XML(
 );
 
 // {091fda1d-857e-4b1e-828f-1c839d9b7897}
-static const GUID GUID_SampleConicGradientPS = { 0x091fda1d, 0x857e, 0x4b1e, {0x82, 0x8f, 0x1c, 0x83, 0x9d, 0x9b, 0x78, 0x97} };
+static const GUID GUID_ConicGradientPixeShader = { 0x091fda1d, 0x857e, 0x4b1e, {0x82, 0x8f, 0x1c, 0x83, 0x9d, 0x9b, 0x78, 0x97} };
 
 // {463B1810-1A08-4786-bef0-97ec8e8c25c8}
 static const GUID CLSID_ConicGradientEffect = { 0x463b1810, 0x1a08, 0x4786, 0xbe, 0xf0, 0x97, 0xec, 0x8e, 0x8c, 0x25, 0xc8 };
 
-ConicGradientEffectD2D1::ConicGradientEffectD2D1() :
+ConicGradientEffect::ConicGradientEffect() :
     mRefCount(0),
     mDrawInfo(0),
     mEffectContext(0),
@@ -61,15 +57,17 @@ ConicGradientEffectD2D1::ConicGradientEffectD2D1() :
     mTransform(D2D1::IdentityMatrix())
 {}
 
-IFACEMETHODIMP ConicGradientEffectD2D1::Initialize(
+IFACEMETHODIMP ConicGradientEffect::Initialize(
     ID2D1EffectContext* pContextInternal,
     ID2D1TransformGraph* pTransformGraph)
 {
     HRESULT hr;
 
-    hr = pContextInternal->LoadPixelShader(GUID_SampleConicGradientPS,
-        SampleConicGradientPS,
-        sizeof(SampleConicGradientPS));
+    hr = pContextInternal->LoadPixelShader(
+        GUID_ConicGradientPixeShader,
+        ConicGradientPixelShader,
+        sizeof(ConicGradientPixelShader)
+    );
 
     if (FAILED(hr)) {
         return hr;
@@ -86,7 +84,7 @@ IFACEMETHODIMP ConicGradientEffectD2D1::Initialize(
     return S_OK;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::PrepareForRender(
+IFACEMETHODIMP ConicGradientEffect::PrepareForRender(
     D2D1_CHANGE_TYPE changeType)
 {
     if (changeType == D2D1_CHANGE_TYPE_NONE) {
@@ -96,17 +94,19 @@ IFACEMETHODIMP ConicGradientEffectD2D1::PrepareForRender(
     // We'll need to inverse transform our pixel, precompute inverse here.
     Matrix mat = ToMatrix(mTransform);
     if (!mat.Invert()) {
-        // Singular
-        return S_OK;
+        log() << "Failed to invert matrix.\n";
+        return E_FAIL;
     }
 
     if (!mStopCollection) {
-        return S_OK;
+        log() << "No stop collection set.\n";
+        return E_FAIL;
     }
 
-    HRESULT hr = mDrawInfo->SetPixelShader(GUID_SampleConicGradientPS);
+    HRESULT hr = mDrawInfo->SetPixelShader(GUID_ConicGradientPixeShader);
 
     if (FAILED(hr)) {
+        log() << "Failed to set pixel shader: " << HEX(hr) << "\n";
         return hr;
     }
 
@@ -114,6 +114,7 @@ IFACEMETHODIMP ConicGradientEffectD2D1::PrepareForRender(
     hr = mDrawInfo->SetResourceTexture(1, tex.Get());
 
     if (FAILED(hr)) {
+        log() << "Failed to set resource texture: " << HEX(hr) << "\n";
         return hr;
     }
 
@@ -141,24 +142,25 @@ IFACEMETHODIMP ConicGradientEffectD2D1::PrepareForRender(
     hr = mDrawInfo->SetPixelShaderConstantBuffer((BYTE*)&buffer, sizeof(buffer));
 
     if (FAILED(hr)) {
+        log() << "Failed to set pixel shader constant buffer: " << HEX(hr) << "\n";
         return hr;
     }
 
     return S_OK;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::SetGraph(
+IFACEMETHODIMP ConicGradientEffect::SetGraph(
     ID2D1TransformGraph* pGraph)
 {
     return pGraph->SetSingleTransformNode(this);
 }
 
-IFACEMETHODIMP_(ULONG) ConicGradientEffectD2D1::AddRef()
-{ 
+IFACEMETHODIMP_(ULONG) ConicGradientEffect::AddRef()
+{
     return ++mRefCount;
 }
 
-IFACEMETHODIMP_(ULONG) ConicGradientEffectD2D1::Release()
+IFACEMETHODIMP_(ULONG) ConicGradientEffect::Release()
 {
     if (!--mRefCount) {
         delete this;
@@ -167,7 +169,7 @@ IFACEMETHODIMP_(ULONG) ConicGradientEffectD2D1::Release()
     return mRefCount;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::QueryInterface(
+IFACEMETHODIMP ConicGradientEffect::QueryInterface(
     REFIID riid,
     void** aPtr)
 {
@@ -198,7 +200,7 @@ IFACEMETHODIMP ConicGradientEffectD2D1::QueryInterface(
     return S_OK;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::MapInputRectsToOutputRect(
+IFACEMETHODIMP ConicGradientEffect::MapInputRectsToOutputRect(
     const D2D1_RECT_L* pInputRects,
     const D2D1_RECT_L* pInputOpaqueSubRects,
     UINT32 inputRectCount,
@@ -214,7 +216,7 @@ IFACEMETHODIMP ConicGradientEffectD2D1::MapInputRectsToOutputRect(
     return S_OK;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::MapOutputRectToInputRects(
+IFACEMETHODIMP ConicGradientEffect::MapOutputRectToInputRects(
     const D2D1_RECT_L* pOutputRect,
     D2D1_RECT_L* pInputRects,
     UINT32 inputRectCount) const
@@ -227,51 +229,51 @@ IFACEMETHODIMP ConicGradientEffectD2D1::MapOutputRectToInputRects(
     return S_OK;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::MapInvalidRect(
+IFACEMETHODIMP ConicGradientEffect::MapInvalidRect(
     UINT32 inputIndex,
     D2D1_RECT_L invalidInputRect,
     D2D1_RECT_L* pInvalidOutputRect) const
 {
-    assert(inputIndex == 0);
+    ASSERT(inputIndex == 0);
 
     *pInvalidOutputRect = invalidInputRect;
     return S_OK;
 }
 
-IFACEMETHODIMP ConicGradientEffectD2D1::SetDrawInfo(
+IFACEMETHODIMP ConicGradientEffect::SetDrawInfo(
     ID2D1DrawInfo* pDrawInfo)
 {
     mDrawInfo = pDrawInfo;
     return S_OK;
 }
 
-HRESULT ConicGradientEffectD2D1::Register(
+HRESULT ConicGradientEffect::Register(
     ID2D1Factory1* aFactory)
 {
     D2D1_PROPERTY_BINDING bindings[] = {
         D2D1_VALUE_TYPE_BINDING(
             L"StopCollection",
-            &ConicGradientEffectD2D1::SetStopCollection,
-            &ConicGradientEffectD2D1::GetStopCollection),
+            &ConicGradientEffect::SetStopCollection,
+            &ConicGradientEffect::GetStopCollection),
         D2D1_VALUE_TYPE_BINDING(
             L"Center",
-            &ConicGradientEffectD2D1::SetCenter,
-            &ConicGradientEffectD2D1::GetCenter),
+            &ConicGradientEffect::SetCenter,
+            &ConicGradientEffect::GetCenter),
         D2D1_VALUE_TYPE_BINDING(
-            L"Angle", &ConicGradientEffectD2D1::SetAngle,
-            &ConicGradientEffectD2D1::GetAngle),
+            L"Angle", &ConicGradientEffect::SetAngle,
+            &ConicGradientEffect::GetAngle),
         D2D1_VALUE_TYPE_BINDING(
             L"StartOffset",
-            &ConicGradientEffectD2D1::SetStartOffset,
-            &ConicGradientEffectD2D1::GetStartOffset),
+            &ConicGradientEffect::SetStartOffset,
+            &ConicGradientEffect::GetStartOffset),
         D2D1_VALUE_TYPE_BINDING(
             L"EndOffset",
-            &ConicGradientEffectD2D1::SetEndOffset,
-            &ConicGradientEffectD2D1::GetEndOffset),
+            &ConicGradientEffect::SetEndOffset,
+            &ConicGradientEffect::GetEndOffset),
         D2D1_VALUE_TYPE_BINDING(
             L"Transform",
-            &ConicGradientEffectD2D1::SetTransform,
-            &ConicGradientEffectD2D1::GetTransform) };
+            &ConicGradientEffect::SetTransform,
+            &ConicGradientEffect::GetTransform) };
     HRESULT hr = aFactory->RegisterEffectFromString(
         CLSID_ConicGradientEffect,
         kXmlDescription,
@@ -285,22 +287,22 @@ HRESULT ConicGradientEffectD2D1::Register(
     return hr;
 }
 
-void ConicGradientEffectD2D1::Unregister(
+void ConicGradientEffect::Unregister(
     ID2D1Factory1* aFactory)
 {
     aFactory->UnregisterEffect(CLSID_ConicGradientEffect);
 }
 
-HRESULT __stdcall ConicGradientEffectD2D1::CreateEffect(
+HRESULT __stdcall ConicGradientEffect::CreateEffect(
     IUnknown** aEffectImpl)
 {
-    *aEffectImpl = static_cast<ID2D1EffectImpl*>(new ConicGradientEffectD2D1());
+    *aEffectImpl = static_cast<ID2D1EffectImpl*>(new ConicGradientEffect());
     (*aEffectImpl)->AddRef();
 
     return S_OK;
 }
 
-HRESULT ConicGradientEffectD2D1::SetStopCollection(
+HRESULT ConicGradientEffect::SetStopCollection(
     IUnknown* aStopCollection)
 {
     if (SUCCEEDED(aStopCollection->QueryInterface(
@@ -313,7 +315,7 @@ HRESULT ConicGradientEffectD2D1::SetStopCollection(
 
 
 
-ComPtr<ID2D1ResourceTexture> ConicGradientEffectD2D1::CreateGradientTexture()
+ComPtr<ID2D1ResourceTexture> ConicGradientEffect::CreateGradientTexture()
 {
     std::vector<D2D1_GRADIENT_STOP> rawStops;
     rawStops.resize(mStopCollection->GetGradientStopCount());
@@ -321,6 +323,8 @@ ComPtr<ID2D1ResourceTexture> ConicGradientEffectD2D1::CreateGradientTexture()
 
     std::vector<unsigned char> textureData;
     textureData.resize(static_cast<std::vector<unsigned char, std::allocator<unsigned char>>::size_type>(4096) * 4);
+
+
     //textureData.resize(4096 * 4);
     unsigned char* texData = &textureData.front();
 
@@ -403,3 +407,6 @@ ComPtr<ID2D1ResourceTexture> ConicGradientEffectD2D1::CreateGradientTexture()
 
     return tex;
 }
+
+
+

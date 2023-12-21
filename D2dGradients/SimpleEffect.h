@@ -1,26 +1,17 @@
 #pragma once
 #include "pch.h"
-#include "macros.h"
 
 #include <d2d1_1.h>
 #include <d2d1effectauthor.h>
 #include <d2d1effecthelpers.h>
 
-// {463B1810-1A08-4786-BEF0-97EC8E8C25C8}
-DEFINE_GUID(CLSID_ConicGradientEffect, 0x463b1810, 0x1a08, 0x4786, 0xbe, 0xf0, 0x97, 0xec, 0x8e, 0x8c, 0x25, 0xc8);
+// {BAE3B462-A937-4FFF-B85E-8CEE23E2CC30}
+DEFINE_GUID(CLSID_SimpleEffect, 0xbae3b462, 0xa937, 0x4fff, 0xb8, 0x5e, 0x8c, 0xee, 0x23, 0xe2, 0xcc, 0x30);
 
-enum {
-    CONIC_PROP_STOP_COLLECTION = 0,
-    CONIC_PROP_CENTER,
-    CONIC_PROP_ANGLE,
-    CONIC_PROP_START_OFFSET,
-    CONIC_PROP_END_OFFSET,
-    CONIC_PROP_TRANSFORM
-};
 
-class ConicGradientEffectD2D1 final
-    : public ID2D1EffectImpl
-    , public ID2D1DrawTransform
+class SimpleEffect final :
+    public ID2D1EffectImpl,
+    public ID2D1DrawTransform
 {
 public:
     // ID2D1EffectImpl
@@ -65,21 +56,12 @@ public:
 
     // COM Calls
     static HRESULT __stdcall CreateEffect(IUnknown** aEffectImpl);
-    HRESULT SetStopCollection(IUnknown* aStopCollection);
-    IUnknown* GetStopCollection() const { return mStopCollection.Get(); }
 
 private:
-    ComPtr<ID2D1ResourceTexture> CreateGradientTexture();
-
-    ConicGradientEffectD2D1();
+    SimpleEffect();
 
     uint32_t mRefCount;
-    ComPtr<ID2D1GradientStopCollection> mStopCollection;
+    ComPtr<ID2D1ResourceTexture> mResourceTexture;
     ComPtr<ID2D1EffectContext> mEffectContext;
     ComPtr<ID2D1DrawInfo> mDrawInfo;
-    SIMPLE_PROP(D2D1_VECTOR_2F, Center)
-    SIMPLE_PROP(FLOAT, Angle)
-    SIMPLE_PROP(FLOAT, StartOffset)
-    SIMPLE_PROP(FLOAT, EndOffset)
-    SIMPLE_PROP(D2D_MATRIX_3X2_F, Transform)
 };

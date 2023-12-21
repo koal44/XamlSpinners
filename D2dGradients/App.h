@@ -14,27 +14,31 @@
 #include <wincodec.h>
 #include "ConicGradientEffectD2D1.h"
 
-class D2dGradients
+class App
 {
 public:
-    D2dGradients();
-    ~D2dGradients();
+    App();
+    ~App();
 
     // Register the window class and call methods for instantiating drawing resources
-    HRESULT Initialize();
+    void Initialize();
+
+    // Process and dispatch messages
+    void RunMessageLoop();
 
 private:
     // Initialize device-independent resources.
     HRESULT CreateDeviceIndependentResources();
 
-    // Initialize device-dependent resources.
-    HRESULT CreateDeviceResources();
+    HRESULT InitializeDirectX();
 
     // Release device-dependent resource.
     void DiscardDeviceResources();
 
     // Draw content.
     HRESULT OnRender();
+
+    HRESULT OnRender2();
 
     // Resize the render target.
     void OnResize(
@@ -50,8 +54,6 @@ private:
         LPARAM lParam
     );
 
-    void ConfigureConicGradient();
-
 private:
     HWND m_hwnd;
     ID2D1Factory1* m_pDirect2dFactory;
@@ -60,5 +62,7 @@ private:
     ID2D1SolidColorBrush* m_pCornflowerBlueBrush;
     ConicGradientEffectD2D1* m_pConicGradient;
 };
+
+
 
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
@@ -9,14 +9,15 @@ namespace ColorCraft.Demo
     {
         public MainWindowViewModel()
         {
-            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Conic Brush");
+            SelectedIndex = UserControlsList.FindIndex(x => x.name == "Conic Gradient");
         }
 
         private readonly List<(string name, UserControl control)> UserControlsList = new()
         {
+            ("Conic Gradient GPU", new ConicGradientGpuControl()),
             ("Linear Gradient", new LinearGradientControl()),
             ("Conic Gradient", new ConicGradientControl()),
-            ("Conic Brush", new ConicGradientBrushControl())
+            ("Conic Brush", new ConicGradientBrushControl()),
         };
 
         public IEnumerable<string> UserControlNames => UserControlsList.Select(x => x.name);

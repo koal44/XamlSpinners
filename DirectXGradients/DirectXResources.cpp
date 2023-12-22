@@ -19,6 +19,7 @@ ComPtr<IDXGIDevice> DirectXResources::m_dxgiDevice = nullptr;
 ComPtr<ID2D1Factory1> DirectXResources::m_d2dFactory = nullptr;
 ComPtr<ID2D1Device> DirectXResources::m_d2dDevice = nullptr;
 D3D_FEATURE_LEVEL DirectXResources::m_featureLevel = D3D_FEATURE_LEVEL_9_1;
+std::mutex DirectXResources::initializationMutex;
 
 DirectXResources::DirectXResources() :
     m_d2dContext(nullptr)
@@ -29,7 +30,14 @@ DirectXResources::~DirectXResources()
 
 HRESULT DirectXResources::CreateDeviceResources()
 {
+    std::lock_guard<std::mutex> lock(initializationMutex);
+
     HRESULT hr = S_OK;
+
+    if (m_dxgiAdapter != nullptr)
+    {
+        return hr;
+    }
 
     UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
@@ -66,18 +74,15 @@ HRESULT DirectXResources::CreateDeviceResources()
         return hr;
     }
 
-
     // Create the Direct3D Device and Context
-
-
     D3D_FEATURE_LEVEL featureLevels[] = {
-         D3D_FEATURE_LEVEL_11_1,
-         D3D_FEATURE_LEVEL_11_0,
-         D3D_FEATURE_LEVEL_10_1,
-         D3D_FEATURE_LEVEL_10_0,
-         D3D_FEATURE_LEVEL_9_3,
-         D3D_FEATURE_LEVEL_9_2,
-         D3D_FEATURE_LEVEL_9_1
+            D3D_FEATURE_LEVEL_11_1,
+            D3D_FEATURE_LEVEL_11_0,
+            D3D_FEATURE_LEVEL_10_1,
+            D3D_FEATURE_LEVEL_10_0,
+            D3D_FEATURE_LEVEL_9_3,
+            D3D_FEATURE_LEVEL_9_2,
+            D3D_FEATURE_LEVEL_9_1
     };
 
     hr = D3D11CreateDevice(
@@ -117,20 +122,6 @@ HRESULT DirectXResources::CreateDeviceResources()
             log() << "Failed to create D3D11 device. Code: " << HEX(hr) << "\n";
             return hr;
         }
-    }
-
-    hr = m_d3dDevice.As(&m_d3dDevice);
-    if (FAILED(hr))
-    {
-        log() << "Failed to get device as ID3D11Device. Code: " << HEX(hr) << "\n";
-        return hr;
-    }
-
-    hr = m_d3dContext.As(&m_d3dContext);
-    if (FAILED(hr))
-    {
-        log() << "Failed to get device context as ID3D11DeviceContext. Code: " << HEX(hr) << "\n";
-        return hr;
     }
 
     // Create the Direct2D Device

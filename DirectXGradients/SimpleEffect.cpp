@@ -36,35 +36,119 @@ static const GUID GUID_SimplePixeShader = { 0xd839b853, 0x14cc, 0x4b19, { 0x80, 
 
 std::vector<BYTE> SimpleEffect::m_pixelShader;
 
-HRESULT SimpleEffect::LoadCompiledShader()
-{
-    const std::string& filename = "C:\\Users\\rando\\source\\repos\\WPF\\XamlSpinners\\x64\\Debug\\ConicGradient.cso";
 
-    std::ifstream file(filename, std::ios::binary | std::ios::ate);
-    if (!file)
-    {
-        log() << "Failed to open shader file: " << filename << "\n";
-        return E_FAIL;
-    }
+//static inline std::wstring GetDllPath() {
+//    std::vector<wchar_t> dllPath(MAX_PATH);
+//    HMODULE hm = NULL;
+//
+//    if (GetModuleHandleEx(
+//        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+//        (LPCWSTR)&GetDllPath,
+//        &hm))
+//    {
+//        GetModuleFileNameW(hm, &dllPath[0], static_cast<DWORD>(dllPath.size()));
+//    }
+//
+//    std::wstring path(dllPath.begin(), dllPath.end());
+//    // Extract the directory
+//    size_t lastBackslash = path.find_last_of(L"\\");
+//    if (lastBackslash != std::wstring::npos) {
+//        path = path.substr(0, lastBackslash);
+//    }
+//
+//    return path;
+//}
 
-    size_t fileSize = static_cast<size_t>(file.tellg());
-    std::vector<BYTE> buffer(fileSize);
+//static inline std::wstring Trim(const std::wstring& str) {
+//    size_t first = str.find_first_not_of(L' ');
+//    if (std::wstring::npos == first) {
+//        return L"";
+//    }
+//    size_t last = str.find_last_not_of(L' ');
+//    return str.substr(first, (last - first + 1));
+//}
 
-    file.seekg(0, std::ios::beg);
-    file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
-    file.close();
 
-    // if buffer is empty then return error
-    if (buffer.empty())
-    {
-        log() << "Failed to read shader file: " << filename << "\n";
-        return E_FAIL;
-    }
-
-    m_pixelShader = buffer;
-
-    return S_OK;
-}
+//HRESULT SimpleEffect::LoadCompiledShader(std::wstring binpath)
+//{
+//    //std::wstring path = GetDllPath();
+//    //log() << "DLL path: " << path << "\n";
+//
+//    std::wstring filename = L"ConicGradient.cso";
+//    //path += L"\\" + filename;
+//    //log() << "Shader path: " << path << "\n";
+//
+//    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+//    if (!file)
+//    {
+//        log() << "Couldn't find: " << filename << "\n";
+//
+//        filename = binpath + L"Resources\\" + filename;
+//        //filename = binpath + filename;
+//
+//        std::ifstream file(filename, std::ios::binary | std::ios::ate);
+//        if (!file)
+//        {
+//            log() << "Couldn't find: " << filename << "\n";
+//            return E_FAIL;
+//        }
+//    }
+//
+//
+//
+//    size_t fileSize = static_cast<size_t>(file.tellg());
+//    log() << "File size: " << fileSize << "\n";
+//
+//    if (fileSize == 0) {
+//        log() << "File is empty: " << filename << "\n";
+//        file.close();
+//        return E_FAIL;
+//    }
+//
+//    std::vector<BYTE> buffer(fileSize);
+//
+//    file.seekg(0, std::ios::beg);
+//    file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+//
+//    if (file.fail()) {
+//        log() << "Failed to read the entire file: " << filename << "\n";
+//        file.close();
+//        return E_FAIL;
+//    }
+//
+//    file.close();
+//
+//    log() << "Buffer size after reading: " << buffer.size() << "\n";
+//
+//    if (buffer.empty()) {
+//        log() << "Buffer is empty after reading file: " << filename << "\n";
+//        return E_FAIL;
+//    }
+//
+//    m_pixelShader = buffer;
+//
+//    log() << "Shader file loaded successfully.\n";
+//    return S_OK;
+//
+//    //size_t fileSize = static_cast<size_t>(file.tellg());
+//    //std::vector<BYTE> buffer(fileSize);
+//
+//    //file.seekg(0, std::ios::beg);
+//    //file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+//    //file.close();
+//
+//    //// if buffer is empty then return error
+//    //if (buffer.empty())
+//    //{
+//    //    log() << "Failed to read shader file: " << filename << "\n";
+//    //    return E_FAIL;
+//    //}
+//
+//
+//    //m_pixelShader = buffer;
+//
+//    //return S_OK;
+//}
 
 //HRESULT SimpleEffect::LoadCompiledShaderFromResource()
 //{
@@ -343,7 +427,7 @@ ComPtr<ID2D1ResourceTexture> SimpleEffect::CreateGradientTexture()
 {
     std::vector<D2D1_GRADIENT_STOP> rawStops;
     rawStops.resize(mStopCollection->GetGradientStopCount());
-    mStopCollection->GetGradientStops(&rawStops.front(), rawStops.size());
+    mStopCollection->GetGradientStops(&rawStops.front(), (UINT)rawStops.size());
 
     std::vector<unsigned char> textureData(4096 * 4);
     unsigned char* texData = &textureData.front();
@@ -426,7 +510,7 @@ ComPtr<ID2D1ResourceTexture> SimpleEffect::CreateGradientTexture()
 
 HRESULT SimpleEffect::RegisterEffect(_In_ ID2D1Factory1* pFactory)
 {
-    LoadCompiledShader();
+    HRESULT hr = S_OK;
 
     D2D1_PROPERTY_BINDING bindings[] = {
         D2D1_VALUE_TYPE_BINDING(
@@ -443,7 +527,7 @@ HRESULT SimpleEffect::RegisterEffect(_In_ ID2D1Factory1* pFactory)
             &SimpleEffect::GetAngle)
     };
 
-    HRESULT hr = pFactory->RegisterEffectFromString(
+    hr = pFactory->RegisterEffectFromString(
         CLSID_SimpleEffect,
         xmlDescription,
         bindings,
@@ -451,19 +535,15 @@ HRESULT SimpleEffect::RegisterEffect(_In_ ID2D1Factory1* pFactory)
         SimpleEffect::Create
     );
 
-    /*HRESULT hr = pFactory->RegisterEffectFromString(CLSID_SimpleEffect,
-        xmlDescription,
-        nullptr,
-        0,
-        SimpleEffect::Create
-    );*/
     return hr;
             
 }
 
-HRESULT __stdcall SimpleEffect::Create(_Outptr_ IUnknown** ppEffectImpl)
+//HRESULT __stdcall
+HRESULT STDMETHODCALLTYPE SimpleEffect::Create(_Outptr_ IUnknown** ppEffectImpl)
 {
     *ppEffectImpl = static_cast<ID2D1EffectImpl*>(new SimpleEffect());
+    if (!*ppEffectImpl) return E_OUTOFMEMORY;
     (*ppEffectImpl)->AddRef();
 
     return S_OK;
@@ -480,10 +560,15 @@ HRESULT SimpleEffect::Initialize(
     HRESULT hr = S_OK;
 
     // Load the compiled pixel shader, and associate it with GUID 
-    hr = pEffectContext->LoadPixelShader(
+    /*hr = pEffectContext->LoadPixelShader(
         GUID_SimplePixeShader,
         m_pixelShader.data(),
-        m_pixelShader.size());
+        (UINT)m_pixelShader.size());*/
+
+    hr = pEffectContext->LoadPixelShader(
+        GUID_SimplePixeShader,
+        ConicGradientPS,
+        sizeof(ConicGradientPS));
     if (FAILED(hr)) {
         log() << "Failed to load pixel shader: " << HEX(hr) << "\n";
         return hr;
@@ -541,14 +626,21 @@ HRESULT SimpleEffect::PrepareForRender(D2D1_CHANGE_TYPE changeType)
     return hr;
 }
 
-HRESULT SimpleEffect::SetGraph(_In_ ID2D1TransformGraph* pTransformGraph)
+IFACEMETHODIMP SimpleEffect::SetGraph(
+    ID2D1TransformGraph* pGraph)
 {
     // Not implemented
-    return E_NOTIMPL;
+
+    HRESULT hr = pGraph->SetSingleTransformNode(this);
+    if (FAILED(hr)) {
+        log() << "Failed to set single transform node: " << HEX(hr) << "\n";
+        return hr;
+    }
+    return hr;
 }
 
 // ID2D1TransformNode method
-UINT32 SimpleEffect::GetInputCount() const
+IFACEMETHODIMP_(UINT32) SimpleEffect::GetInputCount() const
 {
     // No input bitmaps, so...
     return 0;
@@ -585,12 +677,14 @@ HRESULT SimpleEffect::MapInputRectsToOutputRect(
     return S_OK;
 }
 
-HRESULT SimpleEffect::MapInvalidRect(
+IFACEMETHODIMP SimpleEffect::MapInvalidRect(
     UINT32 inputIndex,
     D2D1_RECT_L invalidInputRect,
-    _Out_ D2D1_RECT_L* pInvalidOutputRect
-) const
+    _Out_ D2D1_RECT_L* pInvalidOutputRect) const
 {
+    ASSERT(inputIndex == 0);
+
+    *pInvalidOutputRect = invalidInputRect;
     return S_OK;
 }
 

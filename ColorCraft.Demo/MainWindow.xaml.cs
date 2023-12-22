@@ -1,86 +1,102 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ColorCraft.Demo
 {
     public partial class MainWindow : Window
     {
-        BitmapSource? bitmapSource;
-        string DirectXDll = "C:\\Users\\rando\\source\\repos\\WPF\\XamlSpinners\\x64\\Debug\\DirectXGradients.dll";
+        //readonly WriteableBitmap bitmap = new(300, 300, 96, 96, System.Windows.Media.PixelFormats.Pbgra32, null);
+
+        //[DllImport("DirectXGradients.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //private static extern int GetConicGradientBitmap(string binPath, int width, int height, float angle, out IntPtr outBitmap, out int stride);
+
+        ////[DllImport("DirectXGradients.dll")]
+        ////private static extern int GetConicGradientBitmap(string binPath, int width, int height, float angle, out IntPtr outBitmap, out int stride);
+
+        //[DllImport("DirectXGradients.dll")]
+        //private static extern void FreeBitmap(ref IntPtr bitmap);
+
+        //[DllImport("DirectXGradients.dll")]
+        //private static extern void CleanupDirectXResources();
 
         public MainWindow()
         {
             DataContext = new MainWindowViewModel();
             InitializeComponent();
-            Loaded += MainWindow_Loaded;
+            //CallGetConicGradientBitmap();
+            //MainImage.Source = bitmap;
+            //TestConcurrentAccess();
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            bitmapSource = GetBitmapFromCpp();
-            //Utils.DebugBitmap(bitmapSource);
-            DemoImage.Source = bitmapSource;
-            DemoImage.Width = bitmapSource.Width;
-            DemoImage.Height = bitmapSource.Height;
-            App.Current.Exit += DirextXCleanup;
-        }
+        //private static string GetCurrentSourcePath([CallerFilePath] string path = "")
+        //{
+        //    return path;
+        //}
 
-        
+        //private void CallGetConicGradientBitmap()
+        //{
+        //    int width = 300;  // Example dimensions
+        //    int height = 300;
+        //    IntPtr outBitmap = IntPtr.Zero;
+        //    //bitmap = new WriteableBitmap(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32, null);
 
-        [LibraryImport("C:\\Users\\rando\\source\\repos\\WPF\\XamlSpinners\\x64\\Debug\\DirectXGradients.dll")]
-        private static partial int GetConicGradientBitmap(out IntPtr outBitmap, int width, int height, float angle, out int stride);
+        //    string binPath = AppDomain.CurrentDomain.BaseDirectory;
 
-        [LibraryImport("C:\\Users\\rando\\source\\repos\\WPF\\XamlSpinners\\x64\\Debug\\DirectXGradients.dll")]
-        private static partial void FreeBitmap(ref IntPtr bitmap);
+        //    string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+        //    binPath = Path.GetDirectoryName(exePath) ?? "";
 
-        [LibraryImport("C:\\Users\\rando\\source\\repos\\WPF\\XamlSpinners\\x64\\Debug\\DirectXGradients.dll")]
-        private static partial void CleanupDirectXResources();
+        //    binPath = Environment.GetCommandLineArgs()[0];
+        //    binPath = Path.GetDirectoryName(binPath) ?? "";
 
-        public static BitmapSource GetBitmapFromCpp()
-        {
-            int size = 300;
-            float angle = 0.0f;
+        //    string[] args = Environment.GetCommandLineArgs();
+        //    binPath = string.Join(", ", args);
+        //    Debug.WriteLine("Command Line Args: " + string.Join(", ", args));
 
-            int width = size;
-            int height = size;
+        //    binPath = GetCurrentSourcePath();
 
-            IntPtr outBitmap = IntPtr.Zero;
-            WriteableBitmap bitmap;
-            try
-            {
-                int hr = GetConicGradientBitmap(out outBitmap, width, height, angle * MathF.PI / 180f, out int stride);
+        //    try
+        //    {
+        //        int hr = GetConicGradientBitmap("hello", 300, 300, 0, out outBitmap, out int stride);
 
-                if (hr < 0)
-                    throw new Exception($"GetBitmap failed with hr = 0x{hr:x}");
-                if (outBitmap == IntPtr.Zero)
-                    throw new Exception("Bitmap is null");
+        //        if (hr < 0)
+        //            throw new Exception($"GetBitmap failed with hr = 0x{hr:x}");
+        //        if (outBitmap == IntPtr.Zero)
+        //            throw new Exception("Bitmap is null");
 
-                // Copy the data from unmanaged memory to a managed byte array
-                byte[] managedArray = new byte[height * stride];
-                Marshal.Copy(outBitmap, managedArray, 0, managedArray.Length);
+        //        byte[] managedArray = new byte[height * stride];
+        //        Marshal.Copy(outBitmap, managedArray, 0, managedArray.Length);
 
-                // Create a Bitmap from the byte array
-                bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Pbgra32, null);
-                bitmap.WritePixels(new Int32Rect(0, 0, width, height), managedArray, stride, 0);
-            }
-            finally
-            {
-                // Free the unmanaged memory
-                if (outBitmap != IntPtr.Zero)
-                {
-                    FreeBitmap(ref outBitmap);
-                }
-            }
+        //        bitmap.WritePixels(new Int32Rect(0, 0, width, height), managedArray, stride, 0);
 
-            return bitmap;
-        }
+        //    }
+        //    finally
+        //    {
+        //        if (outBitmap != IntPtr.Zero)
+        //        {
+        //            //FreeBitmap(ref outBitmap);
+        //        }
+        //    }
+        //}
 
-        private void DirextXCleanup(object sender, ExitEventArgs e)
-        {
-            CleanupDirectXResources();
-        }
+
+        //public void TestConcurrentAccess()
+        //{
+        //    var tasks = new List<Task>();
+        //    for (int i = 0; i < 10; i++)  // Adjust the number of tasks as needed
+        //    {
+        //        float angleOffset = i * 10;  // Vary the angle for each task
+        //        tasks.Add(Task.Run(() => CallGetConicGradientBitmap()));
+        //    }
+
+        //    Task.WaitAll(tasks.ToArray());
+        //}
+
     }
 }

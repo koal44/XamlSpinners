@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ColorCraft": {
+      "commandName": "Project",
+      "hotReloadEnabled": false,
+      "nativeDebugging": true
+    }
+  }
+}

@@ -46,7 +46,7 @@ public:
     }
 
 private:
-    LogMode mode = LogMode::Console;
+    LogMode mode = LogMode::File;
     std::wostringstream stream;
     std::wofstream file;
 };

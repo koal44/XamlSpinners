@@ -3,6 +3,7 @@
 #include <d2d1_1.h>
 //#include "ConicGradientEffect.h"
 #include "SimpleEffect.h"
+#include <mutex>
 
 
 class DirectXResources
@@ -19,6 +20,7 @@ class DirectXResources
     static ComPtr<ID2D1Factory1> GetD2DFactory() { return m_d2dFactory; }
     static ComPtr<ID2D1Device> GetD2DDevice() { return m_d2dDevice; }
     static D3D_FEATURE_LEVEL m_featureLevel;
+    static std::mutex initializationMutex;
 
     static void CleanupDeviceResources() {
         if (m_d2dFactory) {
@@ -56,12 +58,6 @@ class DirectXResources
     HRESULT CreateLocalDeviceResources();
 
 private:
-    class AutoCleanup {
-    public:
-        ~AutoCleanup() {
-            DirectXResources::CleanupDeviceResources();
-        }
-    };
     // Static member declarations
     static ComPtr<IDXGIFactory1> m_dxgiFactory;
     static ComPtr<IDXGIAdapter1> m_dxgiAdapter;
@@ -70,8 +66,6 @@ private:
     static ComPtr<IDXGIDevice> m_dxgiDevice;
     static ComPtr<ID2D1Factory1> m_d2dFactory;
     static ComPtr<ID2D1Device> m_d2dDevice;
-    static AutoCleanup sAutoCleanup; // needs to be last static member
-
 
     // instance member declarations
     ComPtr<ID2D1DeviceContext> m_d2dContext;

@@ -63,16 +63,6 @@ namespace ColorCraft.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] ConicGradient {
-            get {
-                object obj = ResourceManager.GetObject("ConicGradient", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] DirectXGradients {
             get {
                 object obj = ResourceManager.GetObject("DirectXGradients", resourceCulture);
